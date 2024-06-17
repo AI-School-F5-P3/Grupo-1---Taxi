@@ -2,6 +2,9 @@ import hashlib
 import pandas as pd
 import numpy as np
 
+#Cuando tengamos una base de datos como tal
+#datos_usuarios = pd.read_csv("usuarios.csv")
+
 lista_usuarios = {'Usuarios': [], 'Passwords': []} #Diccionario vacío para ir rellenando con los usuarios y contraseñas que genere la función
 datos_usuarios = pd.DataFrame.from_dict(lista_usuarios) #Se pasa del diccionario a una base de datos en pandas
 
@@ -27,6 +30,7 @@ def LogIn():
         password_hash = hashlib.sha256(password.encode('utf-8'))
         df = pd.DataFrame({'Usuarios': [user], 'Passwords': [password_hash]})
         datos_usuarios = pd.concat([datos_usuarios, df], ignore_index= True)
+        datos_usuarios.to_csv('Usuarios.csv', index = False)
     else:
         password_inp = input("Escriba su contraseña: ")
         password_inp_hash = hashlib.sha256(password_inp.encode('utf-8'))

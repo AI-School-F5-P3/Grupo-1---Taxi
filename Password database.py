@@ -1,6 +1,5 @@
 import hashlib
 import pandas as pd
-import numpy as np
 
 #Cuando tengamos una base de datos como tal
 #datos_usuarios = pd.read_csv("usuarios.csv")

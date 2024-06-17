@@ -17,7 +17,8 @@ def LogIn():
     Una vez tenemos la contraseña, esta se hashea utilizando sha-256 y se almacena de forma encriptada en nuestra base de datos, para aumentar la seguridad.
     Finalmente el usuario y su contraseña encriptada se añaden a la base de datos de usuarios.
     Si el usuario si existe, se le pedirá que introduzca su contraseña y está se buscara en la base de datos en su forma encriptada.
-    Si hay coincidencias el programa de taximetro se inicia, si no, se le pide que repita.
+    Si hay coincidencias el programa de taximetro se inicia, si no, se le pide que repita la contraseña, hasta un máximo de 6 intentos.
+    El siguiente paso sería incluir una forma de cambiar la contraseña, para ello quizá habría que añadir alguna pregunta y respuesta secreta o similar
     '''
     usuario = input("Escriba su nombre de usuario: ")
     if usuario not in datos_usuarios["Usuarios"].values:

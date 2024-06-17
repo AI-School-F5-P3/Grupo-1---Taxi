@@ -6,6 +6,7 @@ lista_usuarios = {'Usuarios': [], 'Passwords': []} #Diccionario vacío para ir r
 datos_usuarios = pd.DataFrame.from_dict(lista_usuarios) #Se pasa del diccionario a una base de datos en pandas
 
 def LogIn():
+    global datos_usuarios
     '''
     La función en primer lugar va a pedir un nombre al usuario y comprobará mediante condicional if si existe ese nombre en nuestra base de datos.
     Si el usuario no existe, entendemos que es un usuario nuevo y le pedimos que nos de un nombre
@@ -17,28 +18,32 @@ def LogIn():
     Si hay coincidencias el programa de taximetro se inicia, si no, se le pide que repita.
     '''
     usuario = input("Escriba su nombre de usuario: ")
-    if usuario not in datos_usuarios.Usuarios.isin(usuario):
+    if usuario not in datos_usuarios["Usuarios"].values:
         print("Usuario no registrado.")
         user = input("Escriba un nombre de usuario")
-        while user in user.value():
+        while user in datos_usuarios.Usuarios.isin([user]):
             user = input("Ese nombre de usuario ya está seleccionado. Escriba un nombre de usuario.")
         password = input("Escribe una contraseña segura")
         password_hash = hashlib.sha256(password.encode('utf-8'))
-        df = pd.DataFrame({'Usuarios': user, 'Passwords': password_hash})
-        datos_usuarios.append(df)
+        df = pd.DataFrame({'Usuarios': [user], 'Passwords': [password_hash]})
+        datos_usuarios = pd.concat([datos_usuarios, df], ignore_index= True)
     else:
         password_inp = input("Escriba su contraseña: ")
         password_inp_hash = hashlib.sha256(password_inp.encode('utf-8'))
         intentos = 0
-        while(datos_usuarios.loc[datos_usuarios["Usuarios"] == usuario, 'Passwords'].iloc[0] != password_inp_hash):
+        password_local = datos_usuarios.iloc[[datos_usuarios["Usuarios"] == usuario]]["Passwords"][0]
+        
+        while(password_inp_hash.hexdigest() != password_local.hexdigest()):
             print("Contraseña incorrecta")
             password_inp = input("Escriba su contraseña: ")
             password_inp_hash = hashlib.sha256(password_inp.encode('utf-8'))
             intentos += 1
             if intentos == 6:
+                print("Demasiados intentos fallados, reinicie el programa")
                 break
         else:
             print("Bienvenido")
             #taximetro()
 
+LogIn()
 

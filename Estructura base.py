@@ -1,4 +1,4 @@
-import threading
+import time
 
 class conductor:
     tarifa_parado = 0.02

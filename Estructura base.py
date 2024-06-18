@@ -38,15 +38,15 @@ def tipo():
 
 def precio(movimiento):
     tasas = tipo()
-    if movimiento:
-        precio += tasas.tarifa_movimiento
-    else: precio += tasas.tarifa_parado
-
-def calculador():
-    tasas = tipo()
-    taximetro = True
     precio = 0
-    while taximetro:
-        threading.timer(precio, 1)
-        if precio == 20:
-            break
+    taximetro = True
+    while taximetro and precio <= 1:
+        if movimiento:
+            precio += tasas.tarifa_movimiento
+            time.sleep(1)
+            print(precio)
+        else:
+            precio += tasas.tarifa_parado
+            time.sleep(1)
+            print(precio)
+    return(round(int(precio), 2))

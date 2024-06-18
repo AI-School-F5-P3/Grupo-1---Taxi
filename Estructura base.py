@@ -18,7 +18,18 @@ class taxista(conductor):
             self.tarifa_movimiento = round(self.tarifa_movimiento, 2)
 
 
-taxi = taxista(True, 20)
-taxi.tarifa_parado
-uber = VTC(20, 30)
-uber.tarifa_parado
+def calculador():
+    #LogIn()
+    conductor = input("Indica 'Taxista' o 'VTC'")
+    if conductor.lower() == 'taxista':
+        noche = input('¿Es de noche?(si/no)')
+        if noche.lower() == 'si':
+            tasa = input('Indica el procentaje extra de tarifa nocturna')
+            mov = taxista(True, int(tasa))
+        else:
+            mov = taxista(False)
+    else:
+        desc_mov = input("Indica la tasa de descuento en movimiento")
+        desc_par = input("Indica la tasa de descuento en parado")
+        mov = VTC(int(desc_mov), int(desc_par))
+    

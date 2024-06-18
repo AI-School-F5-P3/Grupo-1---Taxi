@@ -1,3 +1,5 @@
+import threading
+
 class conductor:
     tarifa_parado = 0.02
     tarifa_movimiento = 0.05
@@ -18,7 +20,7 @@ class taxista(conductor):
             self.tarifa_movimiento = round(self.tarifa_movimiento, 2)
 
 
-def calculador():
+def tipo():
     #LogIn()
     conductor = input("Indica 'Taxista' o 'VTC'")
     if conductor.lower() == 'taxista':
@@ -32,4 +34,19 @@ def calculador():
         desc_mov = input("Indica la tasa de descuento en movimiento")
         desc_par = input("Indica la tasa de descuento en parado")
         mov = VTC(int(desc_mov), int(desc_par))
-    
+    return(mov)
+
+def precio(movimiento):
+    tasas = tipo()
+    if movimiento:
+        precio += tasas.tarifa_movimiento
+    else: precio += tasas.tarifa_parado
+
+def calculador():
+    tasas = tipo()
+    taximetro = True
+    precio = 0
+    while taximetro:
+        threading.timer(precio, 1)
+        if precio == 20:
+            break

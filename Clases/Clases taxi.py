@@ -26,4 +26,6 @@ class taxista(conductor):
 
 
 taxi = taxista(True, 20)
+taxi.tarifa_parado
 uber = VTC(20, 30)
+uber.tarifa_parado

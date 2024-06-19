@@ -14,8 +14,14 @@ class Game:
         self.start = Start(self.screen, self.gameStateManager)
         self.level = Level(self.screen , self.gameStateManager)
         self.login = login(self.screen, self.gameStateManager)
+        self.registro = registro(self.screen, self.gameStateManager)
+        self.quit = quit(self.gameStateManager)
 
-        self.states = {'start': self.start, 'level': self.level, 'login': self.login}
+        self.states = {'start': self.start, 
+                       'level': self.level, 
+                       'login': self.login,
+                       'registro': self.registro,
+                       'quit': self.quit}
 
     def run(self):
         while True:
@@ -70,6 +76,8 @@ class Start:
                 self.gameStateManager.set_state('quit')
             if login_button_rect.collidepoint((a, b)):
                 self.gameStateManager.set_state('login')
+            if reg_button_rect.collidepoint((a, b)):
+                self.gameStateManager.set_state('registro')
         
 
 class Level:
@@ -82,16 +90,7 @@ class Level:
         self.display.blit(first_screen, (0,0))
         keys = pygame.key.get_pressed()
         if keys[pygame.K_f]:
-            self.gameStateManager.set_state('start')
-
-class gameStateManager:
-    def __init__(self, currentState):
-        self.currentState = currentState
-    def get_state(self):
-        return self.currentState
-    def set_state(self, state):
-        self.currentState = state
-        
+            self.gameStateManager.set_state('level')
 
 class login:
     def __init__(self, display, gameStateManager):
@@ -102,10 +101,30 @@ class login:
         login = pygame.image.load('Graficos/outrun2.jpg')
         self.display.blit(login, (0,0))
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_f]:
-            self.gameStateManager.set_state('level')
+        if keys[pygame.K_q]:
+            self.gameStateManager.set_state('start')
 
-class Quit:
+class registro:
+    def __init__(self, display, gameStateManager):
+        self.display = display
+        self.gameStateManager = gameStateManager
+    
+    def run(self):
+        registro = pygame.image.load('Graficos/outrun2.jpg')
+        self.display.blit(registro, (0,0))
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_q]:
+            self.gameStateManager.set_state('start')
+
+class gameStateManager:
+    def __init__(self, currentState):
+        self.currentState = currentState
+    def get_state(self):
+        return self.currentState
+    def set_state(self, state):
+        self.currentState = state
+
+class quit:
     def __init__(self, gameStateManager):
         self.gameStateManager = gameStateManager
     def run(self):

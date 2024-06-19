@@ -13,8 +13,9 @@ class Game:
         self.gameStateManager = gameStateManager('start')
         self.start = Start(self.screen, self.gameStateManager)
         self.level = Level(self.screen , self.gameStateManager)
+        self.login = login(self.screen, self.gameStateManager)
 
-        self.states = {'start': self.start, 'level': self.level}
+        self.states = {'start': self.start, 'level': self.level, 'login': self.login}
 
     def run(self):
         while True:
@@ -29,7 +30,7 @@ class Game:
             self.clock.tick(FPS)
         
 
-class Level:
+class Start:
     def __init__(self, display, gameStateManager):
         self.display = display
         self.gameStateManager = gameStateManager
@@ -61,14 +62,17 @@ class Level:
         self.display.blit(login_text, (login_button_rect.x + 5, login_button_rect.y+5))
         self.display.blit(reg_text, (reg_button_rect.x + 5, reg_button_rect.y + 5))
         self.display.blit(quit_text, (quit_button_rect.x + 5, quit_button_rect.y + 5))
+        
         if keys[pygame.K_e]:
-            self.gameStateManager.set_state('start')
+            self.gameStateManager.set_state('level')
         if mouse[0]:
             if quit_button_rect.collidepoint((a,b)):
-                self.gameStateManager.set_state('start')
+                self.gameStateManager.set_state('quit')
+            if login_button_rect.collidepoint((a, b)):
+                self.gameStateManager.set_state('login')
         
 
-class Start:
+class Level:
     def __init__(self, display, gameStateManager):
         self.display = display
         self.gameStateManager = gameStateManager
@@ -78,7 +82,7 @@ class Start:
         self.display.blit(first_screen, (0,0))
         keys = pygame.key.get_pressed()
         if keys[pygame.K_f]:
-            self.gameStateManager.set_state('level')
+            self.gameStateManager.set_state('start')
 
 class gameStateManager:
     def __init__(self, currentState):
@@ -88,12 +92,25 @@ class gameStateManager:
     def set_state(self, state):
         self.currentState = state
         
+
+class login:
+    def __init__(self, display, gameStateManager):
+        self.display = display
+        self.gameStateManager = gameStateManager
+
+    def run(self):
+        login = pygame.image.load('Graficos/outrun2.jpg')
+        self.display.blit(login, (0,0))
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_f]:
+            self.gameStateManager.set_state('level')
+
 class Quit:
     def __init__(self, gameStateManager):
         self.gameStateManager = gameStateManager
     def run(self):
-        a,b = pygame.mouse.get_pos()
-
+        pygame.quit()
+        exit()
 
 game = Game()
 game.run()

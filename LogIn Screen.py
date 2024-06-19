@@ -18,17 +18,17 @@ login_font = pygame.font.SysFont('Lucida Console', 45)
 #Rectangulo para el boton, (posicion ancho, posicion alto, tamaño ancho, tamaño alto)
 login_button_rect = pygame.Rect(585, 70, 170, 62)
 #Superficie donde se coloca el boton
-login_text = login_font.render('Log In', True, (255, 0, 0))
+login_text = login_font.render('Log In', True, (128, 245, 10, 1))
 
 #Boton de registo
 reg_font = pygame.font.SysFont('Lucida Console', 45)
 reg_but_rect = pygame.Rect(560, 170, 220, 62)
-reg_text = reg_font.render('Registro', True, (255, 0, 0))
+reg_text = reg_font.render('Registro', True, (128, 245, 10, 1))
 
 #Boton de quit
 quit_font = pygame.font.SysFont('Lucida Console', 45)
 quit_but_rect = pygame.Rect(610, 270, 120, 62)
-quit_text = quit_font.render('Quit', True, (255, 0, 0))
+quit_text = quit_font.render('Quit', True, (128, 245, 10, 1))
 
 #Bucle de ejecución del juego
 while True:
@@ -45,17 +45,17 @@ while True:
     if login_button_rect.x <= a <= login_button_rect.x + 190 and login_button_rect.y <= b <= login_button_rect.y + 70:
         pygame.draw.rect(screen, (91 ,23 ,202, 0.8), login_button_rect) #sin hover
     else:
-        pygame.draw.rect(screen, (110, 110, 110), login_button_rect) #con hover
+        pygame.draw.rect(screen, (65, 0, 168, 0.9), login_button_rect) #con hover
 
     if reg_but_rect.x <= a <= reg_but_rect.x + 210 and reg_but_rect.y <= b <= reg_but_rect.y + 70:
-        pygame.draw.rect(screen, (180, 180, 180), reg_but_rect)
+        pygame.draw.rect(screen, (91 ,23 ,202, 0.8), reg_but_rect)
     else:
-        pygame.draw.rect(screen, (110, 110, 110), reg_but_rect)
+        pygame.draw.rect(screen, (65, 0, 168, 0.9), reg_but_rect)
 
     if quit_but_rect.x <= a <= quit_but_rect.x + 210 and quit_but_rect.y <= b <= quit_but_rect.y + 70:
-        pygame.draw.rect(screen, (180, 180, 180), quit_but_rect)
+        pygame.draw.rect(screen, (91 ,23 ,202, 0.8), quit_but_rect)
     else:
-        pygame.draw.rect(screen, (110, 110, 110), quit_but_rect)
+        pygame.draw.rect(screen, (65, 0, 168, 0.9), quit_but_rect)
 
     screen.blit(first_screen, (0, 0))
     screen.blit(login_text, (login_button_rect.x + 5, login_button_rect.y+5))

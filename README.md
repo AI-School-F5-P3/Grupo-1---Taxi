@@ -6,3 +6,4 @@ Han decidido trabajar en una solución, después de un análisis han determinado
 
 La primera fase del desarrollo consistirá en un programa en Python. Ese programa debe poder ejecutarse, y al hacerlo el programa se quedará a la espera de que se le indique por input que la carrera ha comenzado. En ese momento, el programa empezará a calcular la tarifa, en función de si el taxi está en movimiento o no. Mientras el taxi esté parado, al cliente se le cobrarán 2 céntimos por segundo de carrera. En el momento en el que el taxi arranque, mientras esté en movimiento, se cobrarán 5 céntimos por segundo. Cuando se le indique al programa que la carrera ha terminado, el programa calculará el total (en Euros).
 
+Esto es una prueba.

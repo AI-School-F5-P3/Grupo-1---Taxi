@@ -42,29 +42,40 @@ class Start:
         self.gameStateManager = gameStateManager
 
     def run(self):
+        #Variables generales
         keys = pygame.key.get_pressed()
         mouse = pygame.mouse.get_pressed()
         a,b = pygame.mouse.get_pos()
         login_screen = pygame.image.load('Graficos/login.jpg')
         font = pygame.font.SysFont('Lucida Console', 45)
         color_font = (200, 245, 10, 1)
+        color_rect_hover = (91 ,23 ,202, 0.8)
+        color_rect_base = (65, 0, 168, 0.9)
         #Boton Login
         login_button_rect = pygame.Rect(220, 50, 390, 55)
         login_text = font.render('Iniciar Sesion', True, color_font)
-        pygame.draw.rect(login_screen, (91, 23, 202, 0.8), login_button_rect)
         #Boton Sign Up
         reg_button_rect = pygame.Rect(260, 150, 305, 55)
         reg_text = font.render('Registrarse', True, color_font)
-        pygame.draw.rect(login_screen, (91, 23, 202, 0.8), reg_button_rect)
         #Boton Quit
         quit_button_rect = pygame.Rect(360, 250, 120, 55)
         quit_text = font.render('Quit', True, color_font)
-        pygame.draw.rect(login_screen, (91, 23, 202, 0.8), quit_button_rect)
         self.display.blit(login_screen, (0,0))
         if quit_button_rect.x <= a <= quit_button_rect.x+120 and quit_button_rect.y <= b <= quit_button_rect.y+55:
-            pygame.draw.rect(self.display, (91 ,23 ,202, 0.8), quit_button_rect)
+            pygame.draw.rect(self.display, color_rect_hover, quit_button_rect)
         else:
-            pygame.draw.rect(self.display, (65, 0, 168, 0.9), quit_button_rect)   
+            pygame.draw.rect(self.display, color_rect_base, quit_button_rect)
+
+        if reg_button_rect.x <= a <= reg_button_rect.x+305 and reg_button_rect.y <= b <= reg_button_rect.y+55:
+            pygame.draw.rect(self.display, color_rect_hover, reg_button_rect)
+        else:
+            pygame.draw.rect(self.display, color_rect_base, reg_button_rect)
+
+        if login_button_rect.x <= a <= login_button_rect.x+390 and login_button_rect.y <= b <= login_button_rect.y+55:
+            pygame.draw.rect(self.display, color_rect_hover, login_button_rect)
+        else:
+            pygame.draw.rect(self.display, color_rect_base, login_button_rect)   
+
         self.display.blit(login_text, (login_button_rect.x + 5, login_button_rect.y+5))
         self.display.blit(reg_text, (reg_button_rect.x + 5, reg_button_rect.y + 5))
         self.display.blit(quit_text, (quit_button_rect.x + 5, quit_button_rect.y + 5))

@@ -1,7 +1,7 @@
 import pygame
 from sys import exit
 
-S_Width, S_Height = 800,400
+S_Width, S_Height = 1920,1080
 FPS = 60
 
 class Game:
@@ -35,7 +35,8 @@ class Level:
         self.gameStateManager = gameStateManager
 
     def run(self):
-        self.display.fill((0, 0, 255))
+        login_screen = pygame.image.load('Graficos/out.png')
+        self.display.blit(login_screen, (0,0))
         keys = pygame.key.get_pressed()
         if keys[pygame.K_e]:
             self.gameStateManager.set_state('start')
@@ -46,7 +47,8 @@ class Start:
         self.gameStateManager = gameStateManager
 
     def run(self):
-        self.display.fill((255, 0, 0))
+        first_screen = pygame.image.load('Graficos/001.jpg')
+        self.display.blit(first_screen, (0,0))
         keys = pygame.key.get_pressed()
         if keys[pygame.K_f]:
             self.gameStateManager.set_state('level')

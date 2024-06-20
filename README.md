@@ -30,7 +30,7 @@
 ##  Niveles de Entrega
  1. Nivel Esencial:
     * Programa CLI con las funcionalidades básicas.
-    * Manejodeestado de taxi (parado/en movimiento).
+    * Manejo de estado de taxi (parado/en movimiento).
     * Cálculo y visualización del total de la carrera.
 
  2. Nivel Medio:
@@ -78,5 +78,3 @@
  4. Finalización de la Carrera:
     * Calcular el costo total y mostrarlo al usuario.
     * Preparar el programa para una nueva carrera sin necesidad de reiniciarlo.
-
-Esto es una prueba.

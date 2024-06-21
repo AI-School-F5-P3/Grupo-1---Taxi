@@ -12,13 +12,13 @@ class Game:
         
         self.gameStateManager = gameStateManager('start')
         self.start = Start(self.screen, self.gameStateManager)
-        self.level = Level(self.screen , self.gameStateManager)
+        self.taximetro = Taximetro(self.screen , self.gameStateManager)
         self.login = login(self.screen, self.gameStateManager)
         self.registro = registro(self.screen, self.gameStateManager)
         self.quit = quit(self.gameStateManager)
 
         self.states = {'start': self.start, 
-                       'level': self.level, 
+                       'taximetro': self.taximetro, 
                        'login': self.login,
                        'registro': self.registro,
                        'quit': self.quit}
@@ -90,8 +90,7 @@ class Start:
             if reg_button_rect.collidepoint((a, b)):
                 self.gameStateManager.set_state('registro')
         
-
-class Level:
+class Taximetro:
     def __init__(self, display, gameStateManager):
         self.display = display
         self.gameStateManager = gameStateManager
@@ -100,8 +99,8 @@ class Level:
         first_screen = pygame.image.load('Graficos/start.jpg')
         self.display.blit(first_screen, (0,0))
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_f]:
-            self.gameStateManager.set_state('level')
+        if keys[pygame.K_q]:
+            self.gameStateManager.set_state('start')
 
 class login:
     def __init__(self, display, gameStateManager):
@@ -121,7 +120,7 @@ class registro:
         self.gameStateManager = gameStateManager
     
     def run(self):
-        registro = pygame.image.load('Graficos/outrun2.jpg')
+        registro = pygame.image.load('Graficos/registro (Mediana).jpeg')
         self.display.blit(registro, (0,0))
         keys = pygame.key.get_pressed()
         if keys[pygame.K_q]:

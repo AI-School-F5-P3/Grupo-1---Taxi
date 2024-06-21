@@ -1,6 +1,8 @@
 import pygame
 from sys import exit
 
+
+
 S_Width, S_Height = 800,400
 FPS = 60
 

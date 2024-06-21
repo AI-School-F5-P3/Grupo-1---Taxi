@@ -46,7 +46,7 @@ class Start:
         keys = pygame.key.get_pressed()
         mouse = pygame.mouse.get_pressed()
         a,b = pygame.mouse.get_pos()
-        login_screen = pygame.image.load('Graficos/login.jpg')
+        login_screen = pygame.image.load('Graficos/start.jpg')
         font = pygame.font.SysFont('Lucida Console', 45)
         color_font = (200, 245, 10, 1)
         color_rect_hover = (91 ,23 ,202, 0.8)
@@ -109,7 +109,7 @@ class login:
         self.gameStateManager = gameStateManager
 
     def run(self):
-        login = pygame.image.load('Graficos/outrun2.jpg')
+        login = pygame.image.load('Graficos/login.jpg')
         self.display.blit(login, (0,0))
         keys = pygame.key.get_pressed()
         if keys[pygame.K_q]:

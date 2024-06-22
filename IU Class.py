@@ -11,6 +11,7 @@ class Game:
         pygame.init()
         self.screen = pygame.display.set_mode((S_Width, S_Height))
         self.clock = pygame.time.Clock()
+        self.input_box = TextBox(300, 200, 200, 50, pygame.font.SysFont('Lucida Console', 45))
         
         self.gameStateManager = gameStateManager('start')
         self.start = Start(self.screen, self.gameStateManager)
@@ -31,6 +32,7 @@ class Game:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     exit()
+                self.input_box.handle_event(event)
 
             self.states[(self.gameStateManager.get_state())].run()
 
@@ -112,6 +114,8 @@ class login:
     def run(self):
         login = pygame.image.load('Graficos/login.jpg')
         self.display.blit(login, (0,0))
+        input_box = TextBox(300, 300, 200, 50, pygame.font.SysFont('Lucida Console', 45))
+        input_box.draw(self.display)
         keys = pygame.key.get_pressed()
         if keys[pygame.K_q]:
             self.gameStateManager.set_state('start')
@@ -145,11 +149,11 @@ class quit:
 
 class TextBox:
     def __init__ (self, x, y, w, h, font):
-        self.rect = pygame.rect(x, y, w, h)
-        self.color = 'gray'
+        self.rect = pygame.Rect(x, y, w, h)
+        self.color = (200, 200, 200)
         self.text = ""
         self.font = pygame.font.SysFont('Lucida Console', 45)
-        self.txt_surface = font.render(self.text, True, 'black')
+        self.txt_surface = font.render(self.text, True, (0, 0, 0))
         self.active = False
 
     def handle_event(self, event):
@@ -158,7 +162,7 @@ class TextBox:
                 self.active = not self.active
             else:
                 self.active = False
-            self.color = 'black' if self.active else 'gray'
+            self.color = (0, 0, 0) if self.active else (200, 200, 200)
         
         if event.type == pygame.KEYDOWN:
             if self.active:
@@ -169,9 +173,8 @@ class TextBox:
                     self.text += self.text[:-1]
                 else:
                     self.text += event.unicode
-                self.text_surface = self.font.render(self.text, True, 'black')
+                self.text_surface = self.font.render(self.text, True, (0, 0, 0))
     def draw(self, screen):
-        screen.fill('white')
         pygame.draw.rect(screen, self.color, self.rect, 2)
         screen.blit(self.txt_surface, (self.rect.x + 5, self.rect.y + 5))
         width = max(200, self.txt_surface.get_width() + 10)

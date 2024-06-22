@@ -1,13 +1,11 @@
 import pygame
 from sys import exit
 import pygame_gui
-import pygame_gui.ui_manager
-
 
 
 S_Width, S_Height = 800,400
 FPS = 60
-MANAGER = pygame_gui.UIManager((S_Width, S_Height))
+MANAGER = pygame_gui.UIManager((S_Width, S_Height), 'theme.json')
 
 class Game:
     def __init__(self):

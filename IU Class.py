@@ -1,17 +1,19 @@
 import pygame
 from sys import exit
+import pygame_gui
+import pygame_gui.ui_manager
 
 
 
 S_Width, S_Height = 800,400
 FPS = 60
+MANAGER = pygame_gui.UIManager((S_Width, S_Height))
 
 class Game:
     def __init__(self):
         pygame.init()
         self.screen = pygame.display.set_mode((S_Width, S_Height))
         self.clock = pygame.time.Clock()
-        self.input_box = TextBox(300, 200, 200, 50, pygame.font.SysFont('Lucida Console', 45))
         
         self.gameStateManager = gameStateManager('start')
         self.start = Start(self.screen, self.gameStateManager)
@@ -32,6 +34,8 @@ class Game:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     exit()
+
+                MANAGER.process_events(event)
 
             self.states[(self.gameStateManager.get_state())].run()
 
@@ -113,8 +117,7 @@ class login:
     def run(self):
         login = pygame.image.load('Graficos/login.jpg')
         self.display.blit(login, (0,0))
-        #self.input_box = TextBox(300, 300, 200, 50, pygame.font.SysFont('Lucida Console', 45))
-        #self.input_box.draw(self.display)
+        text_input = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.rect((350, 275), (900, 50)), manager = pygame_gui.UIManager((S_Width, S_Height)), object_id = '#main_text_entry')
         keys = pygame.key.get_pressed()
         if keys[pygame.K_q]:
             self.gameStateManager.set_state('start')
@@ -173,6 +176,7 @@ class TextBox:
                 else:
                     self.text += event.unicode
                 self.text_surface = self.font.render(self.text, True, (0, 0, 0))
+
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, self.rect, 2)
         screen.blit(self.txt_surface, (self.rect.x + 5, self.rect.y + 5))

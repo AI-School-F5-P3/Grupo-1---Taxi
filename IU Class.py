@@ -32,7 +32,6 @@ class Game:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     exit()
-                self.input_box.handle_event(event)
 
             self.states[(self.gameStateManager.get_state())].run()
 
@@ -114,8 +113,8 @@ class login:
     def run(self):
         login = pygame.image.load('Graficos/login.jpg')
         self.display.blit(login, (0,0))
-        input_box = TextBox(300, 300, 200, 50, pygame.font.SysFont('Lucida Console', 45))
-        input_box.draw(self.display)
+        #self.input_box = TextBox(300, 300, 200, 50, pygame.font.SysFont('Lucida Console', 45))
+        #self.input_box.draw(self.display)
         keys = pygame.key.get_pressed()
         if keys[pygame.K_q]:
             self.gameStateManager.set_state('start')

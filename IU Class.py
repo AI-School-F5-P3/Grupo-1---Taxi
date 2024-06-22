@@ -5,7 +5,6 @@ import pygame_gui
 
 S_Width, S_Height = 800,400
 FPS = 60
-MANAGER = pygame_gui.UIManager((S_Width, S_Height), 'theme.json')
 
 class Game:
     def __init__(self):
@@ -32,8 +31,6 @@ class Game:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     exit()
-
-                MANAGER.process_events(event)
 
             self.states[(self.gameStateManager.get_state())].run()
 
@@ -115,7 +112,6 @@ class login:
     def run(self):
         login = pygame.image.load('Graficos/login.jpg')
         self.display.blit(login, (0,0))
-        text_input = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.rect((350, 275), (900, 50)), manager = pygame_gui.UIManager((S_Width, S_Height)), object_id = '#main_text_entry')
         keys = pygame.key.get_pressed()
         if keys[pygame.K_q]:
             self.gameStateManager.set_state('start')

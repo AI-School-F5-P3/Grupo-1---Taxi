@@ -3,7 +3,6 @@ import pandas as pd
 import hashlib
 from tkinter import messagebox
 from Check_passwords import LogIn
-from IU_Class import Game
 
 class GUI:
     def __init__(self):
@@ -19,9 +18,6 @@ class GUI:
         self.reg.pack()
 
         self.root.mainloop()
-    
-    def check_password(self):
-        LogIn(False, self.user.get(), self.password.get())
 
     def login_screen(self):
         for widget in self.root.winfo_children():
@@ -52,6 +48,8 @@ class GUI:
         self.button = tk.Button(self.root, text = "Registro", font = ('Lucida Console', 16))
         self.button.pack()
 
+    def check_password(self):
+            LogIn(self.user.get(), self.password.get())
 
 
 GUI()

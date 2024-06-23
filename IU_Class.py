@@ -144,7 +144,7 @@ class Taximetro:
             self.display.blit(clock_text, (50, 50))
 
             # Mostrar la puntuación
-            score_text = self.font.render(f'Puntuación: {int(self.score)}', True, (color_font))
+            score_text = self.font.render(f'Precio: {round(self.score, 2)} €', True, (color_font))
             self.display.blit(score_text, (50, 100))
 
 class gameStateManager:

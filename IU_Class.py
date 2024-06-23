@@ -107,7 +107,7 @@ class Taximetro:
         self.display = display
         self.gameStateManager = gameStateManager
         self.car = pygame.image.load('Graficos/car1.png')
-        self.car_position = 100
+        self.car_position = 20
         self.car_mov = False
         self.font = pygame.font.SysFont('Lucida Console', 30)
         self.start_time = None  # Inicializamos start_time como None

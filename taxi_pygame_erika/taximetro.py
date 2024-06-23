@@ -17,10 +17,10 @@ red = (255, 0, 0)
 blue = (0, 0, 255)
 
 # Cargar y redimensionar imágenes
-road_image = pygame.image.load('images/road.png')  # Ruta de tu imagen de carretera
+road_image = pygame.image.load('taxi_pygame_erika/images/road.png')  # Ruta de tu imagen de carretera
 road_image = pygame.transform.scale(road_image, (screen_width, screen_height))
 
-car_image = pygame.image.load('images/taxi.png')  # Ruta de tu imagen de taxi
+car_image = pygame.image.load('taxi_pygame_erika/images/taxi.png')  # Ruta de tu imagen de taxi
 car_width = 60
 car_height = 100
 car_image = pygame.transform.scale(car_image, (car_width, car_height))

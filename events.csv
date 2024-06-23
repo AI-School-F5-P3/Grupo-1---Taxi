@@ -1,0 +1,9 @@
+trip_id,driver_name,passenger_name,license_plate,passenger_count,event,time,total_time,total_pause_time,fare,initial_distance,final_distance,total_distance
+1,John Doe,Jane Doe,ABC123,1,start,2024-06-23 10:21:09,,,,,,
+1,John Doe,Jane Doe,ABC123,1,pause,2024-06-23 10:21:11,,,,,,
+3,John Doe,Jane Doe,ABC123,1,start,2024-06-23 10:48:14,,,,,,
+3,John Doe,Jane Doe,ABC123,1,pause,2024-06-23 10:48:25,,,,,,
+3,John Doe,Jane Doe,ABC123,1,resume,2024-06-23 10:48:54,,,,,,
+3,John Doe,Jane Doe,ABC123,1,pause,2024-06-23 10:49:27,,,,,,
+3,John Doe,Jane Doe,ABC123,1,resume,2024-06-23 10:49:36,,,,,,
+3,John Doe,Jane Doe,ABC123,1,end,2024-06-23 10:49:41,50.00601363182068,37.17435669898987,1.6415828466415405,0,19.1800000000002,19.1800000000002

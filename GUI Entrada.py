@@ -1,5 +1,9 @@
 import tkinter as tk
+import pandas as pd
+import hashlib
 from tkinter import messagebox
+from Check_passwords import LogIn
+from IU_Class import Game
 
 class GUI:
     def __init__(self):
@@ -16,13 +20,8 @@ class GUI:
 
         self.root.mainloop()
     
-    def show_message(self):
-        if self.user.get() == "Alberto":
-            print("Alberto")
-            #game = Game()
-            #game.run()
-        else:
-            messagebox.showinfo(title = "Message", message = 'Nope')
+    def check_password(self):
+        LogIn(False, self.user.get(), self.password.get())
 
     def login_screen(self):
         for widget in self.root.winfo_children():
@@ -36,7 +35,7 @@ class GUI:
         self.password = tk.Entry(self.root, font =('Lucida Console', 16), show = '*')
         self.password.pack()
 
-        self.button = tk.Button(self.root, text = "Iniciar Sesion", font = ('Lucida Console', 16), command = self.show_message)
+        self.button = tk.Button(self.root, text = "Iniciar Sesion", font = ('Lucida Console', 16), command = self.check_password)
         self.button.pack()
     
     def reg_screen(self):

@@ -84,6 +84,9 @@ class GUI:
 
         self.submit = tk.Button(self.root, text = "Enviar", font = ('Lucida console', 16), command = self.change_pswd)
         self.submit.pack()
+
+        self.back = tk.Button(self.root, text = "Atrás", font = ('Lucida Console', 16), command = self.login_screen)
+        self.back.pack()
     
 
     def check_password(self):

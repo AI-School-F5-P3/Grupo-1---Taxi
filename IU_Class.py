@@ -15,8 +15,8 @@ class Game:
         self.gameStateManager = gameStateManager('start')
         self.start = Start(self.screen, self.gameStateManager)
         self.intro = Intro(self.screen, self.gameStateManager)
-        self.taximetro = Taximetro(self.screen , self.gameStateManager)
-        self.quit = quit(self.gameStateManager)
+        self.taximetro = Taximetro(self.screen, self.gameStateManager)
+        self.quit = Quit(self.gameStateManager)
 
         self.states = {'start': self.start, 
                        'taximetro': self.taximetro,
@@ -29,82 +29,112 @@ class Game:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     exit()
-
-            self.states[(self.gameStateManager.get_state())].run()
+                # Manejar eventos específicos del estado actual
+                self.states[self.gameStateManager.get_state()].handle_events(event)
+            
+            self.states[self.gameStateManager.get_state()].run()
 
             pygame.display.update()
             self.clock.tick(self.FPS)
-        
 
 class Start:
     def __init__(self, display, gameStateManager):
         self.display = display
         self.gameStateManager = gameStateManager
 
+    def handle_events(self, event):
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_e:
+                self.gameStateManager.set_state('level')
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            a, b = pygame.mouse.get_pos()
+            if self.quit_button_rect.collidepoint((a, b)):
+                self.gameStateManager.set_state('quit')
+            elif self.login_button_rect.collidepoint((a, b)):
+                self.gameStateManager.set_state('intro')
+
     def run(self):
-        #Variables generales
-        keys = pygame.key.get_pressed()
-        mouse = pygame.mouse.get_pressed()
-        a,b = pygame.mouse.get_pos()
-        login_screen = pygame.image.load('Graficos/road_big.jpg')
+        # Variables generales
+        a, b = pygame.mouse.get_pos()
+        login_screen = pygame.image.load('Graficos/base_2.jpeg')
         font = pygame.font.SysFont('Lucida Console', 70)
         color_font = (200, 245, 10, 1)
-        color_rect_hover = (91 ,23 ,202, 0.8)
+        color_rect_hover = (91, 23, 202, 0.8)
         color_rect_base = (65, 0, 168, 0.9)
-        #Boton Start
-        login_button_rect = pygame.Rect(450, 337.5, 650, 80)
+        # Botón Start
+        self.login_button_rect = pygame.Rect(500, 400, 650, 80)
         login_text = font.render('Empezar carrera', True, color_font)
-        #Boton Quit
-        quit_button_rect = pygame.Rect(650, 600, 180, 80)
+        # Botón Quit
+        self.quit_button_rect = pygame.Rect(730, 650, 180, 80)
         quit_text = font.render('Quit', True, color_font)
-        self.display.blit(login_screen, (0,0))
-        if quit_button_rect.x <= a <= quit_button_rect.x+120 and quit_button_rect.y <= b <= quit_button_rect.y+55:
-            pygame.draw.rect(self.display, color_rect_hover, quit_button_rect)
+        self.display.blit(login_screen, (0, 0))
+        if self.quit_button_rect.collidepoint((a, b)):
+            pygame.draw.rect(self.display, color_rect_hover, self.quit_button_rect)
         else:
-            pygame.draw.rect(self.display, color_rect_base, quit_button_rect)
+            pygame.draw.rect(self.display, color_rect_base, self.quit_button_rect)
 
-        if login_button_rect.x <= a <= login_button_rect.x+830 and login_button_rect.y <= b <= login_button_rect.y+123.75:
-            pygame.draw.rect(self.display, color_rect_hover, login_button_rect)
+        if self.login_button_rect.collidepoint((a, b)):
+            pygame.draw.rect(self.display, color_rect_hover, self.login_button_rect)
         else:
-            pygame.draw.rect(self.display, color_rect_base, login_button_rect)   
+            pygame.draw.rect(self.display, color_rect_base, self.login_button_rect)   
 
-        self.display.blit(login_text, (login_button_rect.x + 5, login_button_rect.y+5))
-        self.display.blit(quit_text, (quit_button_rect.x + 5, quit_button_rect.y + 5))
-        
-        if keys[pygame.K_e]:
-            self.gameStateManager.set_state('level')
-        if mouse[0]:
-            if quit_button_rect.collidepoint((a,b)):
-                self.gameStateManager.set_state('quit')
-            if login_button_rect.collidepoint((a, b)):
-                self.gameStateManager.set_state('intro')
+        self.display.blit(login_text, (self.login_button_rect.x + 5, self.login_button_rect.y + 5))
+        self.display.blit(quit_text, (self.quit_button_rect.x + 5, self.quit_button_rect.y + 5))
 
 class Intro:
     def __init__(self, display, gameStateManager):
         self.display = display
         self.gameStateManager = gameStateManager
 
+    def handle_events(self, event):
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_RETURN:
+                self.gameStateManager.set_state('taximetro')
+
     def run(self):
-        fondo = pygame.image.load('Graficos/road_big.jpg')
-        self.display.blit(fondo, (0,0))
+        fondo = pygame.image.load('Graficos/base_2.jpeg')
+        self.display.blit(fondo, (0, 0))
         texto = pygame.image.load('Graficos/Intro_text (Mediana).png')
         self.display.blit(texto, (100, 100))
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_RETURN]:
-            self.gameStateManager.set_state('taximetro')
 
-        
 class Taximetro:
     def __init__(self, display, gameStateManager):
         self.display = display
         self.gameStateManager = gameStateManager
+        self.car = pygame.image.load('Graficos/car1.png')
+        self.car_position = 20
+        self.car_mov = False
+        self.font = pygame.font.SysFont('Lucida Console', 30)
+        self.start_time = pygame.time.get_ticks()
+        self.score = 0
+
+    def handle_events(self, event):
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                self.car_mov = not self.car_mov
+            elif event.key == pygame.K_p:
+                self.gameStateManager.set_state('start')
 
     def run(self):
-        first_screen = pygame.image.load('Graficos/road_big.jpg')
-        self.display.blit(first_screen, (0,0))
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_q]:
-            self.gameStateManager.set_state('start')
+        first_screen = pygame.image.load('Graficos/base_2.jpeg')
+        self.display.blit(first_screen, (0, 0))
+        color_font = (200, 245, 10, 1)
+
+        if self.car_mov:
+            self.car_position += 2  # Ajusta la velocidad del coche según sea necesario
+            if self.car_position > 1600:  # 1600 es el ancho de la pantalla
+                self.car_position = -self.car.get_width()  # Aparecer en el otro lado
+
+        self.display.blit(self.car, (self.car_position, 700))
+
+        # Calcular el tiempo transcurrido
+        elapsed_time = (pygame.time.get_ticks() - self.start_time) // 1000
+        clock_text = self.font.render(f'Tiempo transcurrido: {elapsed_time}', True, (color_font))
+        self.display.blit(clock_text, (50, 50))
+
+        # Mostrar la puntuación
+        score_text = self.font.render(f'Precio: {self.score}', True, (color_font))
+        self.display.blit(score_text, (50, 100))
 
 class gameStateManager:
     def __init__(self, currentState):
@@ -114,17 +144,16 @@ class gameStateManager:
     def set_state(self, state):
         self.currentState = state
 
-class quit:
+class Quit:
     def __init__(self, gameStateManager):
         self.gameStateManager = gameStateManager
     def run(self):
         pygame.quit()
         exit()
 
-
 game = Game()
 game.run()
 
 def init_game():
     game = Game()
-    game.run()                    
+    game.run()

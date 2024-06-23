@@ -170,3 +170,7 @@ class Quit:
     def run(self):
         pygame.quit()
         exit()
+
+def init_game():
+    game = Game()
+    game.run()

@@ -27,6 +27,26 @@ def Register(username, password, s_quest, s_answer):
         df = pd.DataFrame({'Usuarios' : [username], 'Passwords': [password_hash], 'Pregunta Secreta' : s_quest, 'Respuesta Secreta': s_answer})
         datos_usuarios = pd.concat([datos_usuarios, df], ignore_index = True)
         datos_usuarios.to_csv('Usuarios.csv', index = False)
-        tk.messagebox.showinfo(title = "Registro completado", message = "Registo completado, por favor cierre la aplicación e inicie sesión")
+        tk.messagebox.showinfo(title = "Registro completado", message = "Registo completado")
         return(True)
                         
+
+def Pregunta(username):
+    datos_usuarios = pd.read_csv("Usuarios.csv")
+    if not datos_usuarios.Usuarios.isin([username]).any():
+        tk.messagebox.showinfo(title = "Error", message = "Usuario no encontrado")
+    else:
+        pregunta_s = datos_usuarios.loc[datos_usuarios["Usuarios"] == username]["Pregunta Secreta"].item()
+        tk.messagebox.showinfo(title = "Pregunta", message = pregunta_s)
+
+def Respuesta(username, answer, new_pswd):
+    datos_usuarios = pd.read_csv("Usuarios.csv")
+    local_answ = datos_usuarios.loc[datos_usuarios["Usuarios"] == username]["Respuesta Secreta"].item()
+    if local_answ == answer:
+        new_pswd_hash = hashlib.sha256(new_pswd.encode('utf-8')).hexdigest()
+        datos_usuarios.loc[datos_usuarios["Usuarios"] == username, "Passwords"] = new_pswd_hash
+        datos_usuarios.to_csv('Usuarios.csv', index = False)
+        tk.messagebox.showinfo(title = "Exito", message = "Contraseña cambiada")
+    else:
+        tk.messagebox.showinfo(title = "Error", message = "Respuesta Incorrecta")
+    

@@ -1,0 +1,4 @@
+*.txt text
+*.sh text eol=lf
+*.bat text eol=crlf
+*.py text eol=lf

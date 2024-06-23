@@ -144,6 +144,7 @@ class quit:
         pygame.quit()
         exit()
 
-                    
-game = Game()
-game.run()
+
+def init_game():
+    game = Game()
+    game.run()                    

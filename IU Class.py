@@ -2,20 +2,20 @@ import pygame
 from sys import exit
 import pygame_gui
 
-
-S_Width, S_Height = 800,400
-FPS = 60
-
 class Game:
     def __init__(self):
+        self.FPS = 60
+        self.S_Width = 800
+        self.S_Height = 400
         pygame.init()
-        self.screen = pygame.display.set_mode((S_Width, S_Height))
+        self.screen = pygame.display.set_mode((self.S_Width, self.S_Height))
         self.clock = pygame.time.Clock()
+        self.manager = pygame_gui.UIManager((self.S_Width, self.S_Height))
         
         self.gameStateManager = gameStateManager('start')
         self.start = Start(self.screen, self.gameStateManager)
         self.taximetro = Taximetro(self.screen , self.gameStateManager)
-        self.login = login(self.screen, self.gameStateManager)
+        self.login = login(self.screen, self.gameStateManager, self.manager)
         self.registro = registro(self.screen, self.gameStateManager)
         self.quit = quit(self.gameStateManager)
 
@@ -35,7 +35,7 @@ class Game:
             self.states[(self.gameStateManager.get_state())].run()
 
             pygame.display.update()
-            self.clock.tick(FPS)
+            self.clock.tick(self.FPS)
         
 
 class Start:
@@ -105,9 +105,10 @@ class Taximetro:
             self.gameStateManager.set_state('start')
 
 class login:
-    def __init__(self, display, gameStateManager):
+    def __init__(self, display, gameStateManager, manager):
         self.display = display
         self.gameStateManager = gameStateManager
+        self.manager = manager
 
     def run(self):
         login = pygame.image.load('Graficos/login.jpg')
@@ -142,40 +143,6 @@ class quit:
     def run(self):
         pygame.quit()
         exit()
-
-class TextBox:
-    def __init__ (self, x, y, w, h, font):
-        self.rect = pygame.Rect(x, y, w, h)
-        self.color = (200, 200, 200)
-        self.text = ""
-        self.font = pygame.font.SysFont('Lucida Console', 45)
-        self.txt_surface = font.render(self.text, True, (0, 0, 0))
-        self.active = False
-
-    def handle_event(self, event):
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if self.rect.collidepoint(event.pos):
-                self.active = not self.active
-            else:
-                self.active = False
-            self.color = (0, 0, 0) if self.active else (200, 200, 200)
-        
-        if event.type == pygame.KEYDOWN:
-            if self.active:
-                if event.key == pygame.K_RETURN:
-                    print(self.text)
-                    self.text = ""
-                elif event.key == pygame.K_BACKSPACE:
-                    self.text += self.text[:-1]
-                else:
-                    self.text += event.unicode
-                self.text_surface = self.font.render(self.text, True, (0, 0, 0))
-
-    def draw(self, screen):
-        pygame.draw.rect(screen, self.color, self.rect, 2)
-        screen.blit(self.txt_surface, (self.rect.x + 5, self.rect.y + 5))
-        width = max(200, self.txt_surface.get_width() + 10)
-        self.rect.w = S_Width
 
                     
 game = Game()

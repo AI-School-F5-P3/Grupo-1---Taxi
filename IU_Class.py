@@ -1,6 +1,7 @@
 import pygame
 from sys import exit
 import pygame_gui
+import time
 
 class Game:
     def __init__(self):
@@ -22,6 +23,8 @@ class Game:
                        'taximetro': self.taximetro,
                        'intro': self.intro,
                        'quit': self.quit}
+        
+        self.gameStateManager.set_states(self.states)
 
     def run(self):
         while True:
@@ -90,6 +93,8 @@ class Intro:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_RETURN:
                 self.gameStateManager.set_state('taximetro')
+                # Pasar el estado actual a Taximetro para iniciar el tiempo
+                self.gameStateManager.get_states()['taximetro'].start_time = time.time()
 
     def run(self):
         fondo = pygame.image.load('Graficos/base_2.jpeg')
@@ -102,10 +107,10 @@ class Taximetro:
         self.display = display
         self.gameStateManager = gameStateManager
         self.car = pygame.image.load('Graficos/car1.png')
-        self.car_position = 20
+        self.car_position = 100
         self.car_mov = False
         self.font = pygame.font.SysFont('Lucida Console', 30)
-        self.start_time = pygame.time.get_ticks()
+        self.start_time = None  # Inicializamos start_time como None
         self.score = 0
 
     def handle_events(self, event):
@@ -120,32 +125,42 @@ class Taximetro:
         self.display.blit(first_screen, (0, 0))
         color_font = (200, 245, 10, 1)
 
-        if self.car_mov:
-            self.car_position += 2  # Ajusta la velocidad del coche según sea necesario
-            if self.car_position > 1600:  # 1600 es el ancho de la pantalla
-                self.car_position = -self.car.get_width()  # Aparecer en el otro lado
-            self.score += 0.05 / 60 # Precio en movimiento por segundo
-        else:
-            self.score += 0.02 /60 # Precio en parado por segundo
+        if self.start_time is not None:  # Aseguramos que start_time tenga un valor antes de usarlo
+            if self.car_mov:
+                self.car_position += 5  # Ajusta la velocidad del coche según sea necesario
+                if self.car_position > 1600:  # 1600 es el ancho de la pantalla
+                    self.car_position = -self.car.get_width()  # Aparecer en el otro lado
+                self.score += 0.05 / 60  # Incrementar la puntuación por segundo en movimiento
+            else:
+                self.score += 0.02 / 60  # Incrementar la puntuación por segundo en parado
 
-        self.display.blit(self.car, (self.car_position, 700))
+            self.display.blit(self.car, (self.car_position, 700))
 
-        # Calcular el tiempo transcurrido
-        elapsed_time_ms = pygame.time.get_ticks() - self.start_time
-        elapsed_minutes = elapsed_time_ms // 60000
-        elapsed_seconds = (elapsed_time_ms % 60000) // 1000
-        clock_text = self.font.render(f'Tiempo transcurrido: {elapsed_minutes:02}:{elapsed_seconds:02}', True, (color_font))
-        self.display.blit(clock_text, (50, 50))
+            # Calcular el tiempo transcurrido en minutos y segundos
+            elapsed_time_s = time.time() - self.start_time
+            elapsed_minutes = int(elapsed_time_s // 60)
+            elapsed_seconds = int(elapsed_time_s % 60)
+            clock_text = self.font.render(f'Tiempo: {elapsed_minutes:02}:{elapsed_seconds:02}', True, (color_font))
+            self.display.blit(clock_text, (50, 50))
 
-        # Mostrar la puntuación
-        score_text = self.font.render(f'Precio: {round(self.score, 1)} €', True, (color_font))
-        self.display.blit(score_text, (50, 100))
+            # Mostrar la puntuación
+            score_text = self.font.render(f'Puntuación: {int(self.score)}', True, (color_font))
+            self.display.blit(score_text, (50, 100))
 
 class gameStateManager:
     def __init__(self, currentState):
         self.currentState = currentState
+        self.states = None  # Inicializamos states como None
+
+    def set_states(self, states):
+        self.states = states  # Método para establecer los estados
+
+    def get_states(self):
+        return self.states  # Método para obtener los estados
+
     def get_state(self):
         return self.currentState
+
     def set_state(self, state):
         self.currentState = state
 
@@ -156,6 +171,5 @@ class Quit:
         pygame.quit()
         exit()
 
-def init_game():
-    game = Game()
-    game.run()
+game = Game()
+game.run()

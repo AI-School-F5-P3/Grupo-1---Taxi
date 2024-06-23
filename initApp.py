@@ -47,6 +47,10 @@ def registrar_usuario(datos_usuarios):
         
 def validar_contrasena(datos_usuarios, usuario): 
     password_inp = input("Escriba su contraseña: ").strip()
+    # Control para que no introduzcan una contraseña vacía
+    while not password_inp:
+        print("La contraseña no puede estar vacía.")
+        password_inp = input("Escriba su contraseña: ").strip()
     password_inp_hash = hashlib.sha256(password_inp.encode('utf-8')).hexdigest()
     intentos = 0
     password_local = datos_usuarios.loc[datos_usuarios["Usuarios"].str.lower() == usuario, "Passwords"].values[0]
@@ -55,6 +59,9 @@ def validar_contrasena(datos_usuarios, usuario):
         print("Contraseña incorrecta")
         registrar_accion(f"Contraseña incorrecta para usuario: {usuario}")
         password_inp = input("Escriba su contraseña: ").strip()
+        while not password_inp:
+            print("La contraseña no puede estar vacía.")
+            password_inp = input("Escriba su contraseña: ").strip()
         password_inp_hash = hashlib.sha256(password_inp.encode('utf-8')).hexdigest()
         intentos += 1
 
@@ -79,7 +86,18 @@ def cambiar_contrasena(datos_usuarios, usuario):
 
     if secret_answ == true_answ:
         new_pass = input("Introduce tu nueva contraseña: ")
+        while not new_pass:
+            print("La contraseña no puede estar vacía.")
+            new_pass = input("Introduce tu nueva contraseña: ").strip()
+        current_pass_hash = datos_usuarios.loc[datos_usuarios["Usuarios"].str.lower() == usuario, "Passwords"].values[0]
         new_pass_hash = hashlib.sha256(new_pass.encode('utf-8')).hexdigest()
+        while new_pass_hash == current_pass_hash:
+            print("La nueva contraseña no puede ser igual a la actual.")
+            new_pass = input("Introduce tu nueva contraseña diferente a la actual: ").strip()
+            while not new_pass:
+                print("La contraseña no puede estar vacía.")
+                new_pass = input("Introduce tu nueva contraseña: ").strip()
+            new_pass_hash = hashlib.sha256(new_pass.encode('utf-8')).hexdigest()        
         datos_usuarios.loc[datos_usuarios["Usuarios"].str.lower() == usuario, "Passwords"] = new_pass_hash
         datos_usuarios.to_csv(path, index=False)
         print("Contraseña Cambiada")

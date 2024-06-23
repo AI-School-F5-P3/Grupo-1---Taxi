@@ -1,0 +1,1 @@
+Rama personal usada para realizar pruebas y locuras sin afectar a la rama de producción main.

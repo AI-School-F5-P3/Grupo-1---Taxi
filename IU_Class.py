@@ -128,8 +128,10 @@ class Taximetro:
         self.display.blit(self.car, (self.car_position, 700))
 
         # Calcular el tiempo transcurrido
-        elapsed_time = (pygame.time.get_ticks() - self.start_time) // 1000
-        clock_text = self.font.render(f'Tiempo transcurrido: {elapsed_time}', True, (color_font))
+        elapsed_time_ms = pygame.time.get_ticks() - self.start_time
+        elapsed_minutes = elapsed_time_ms // 60000
+        elapsed_seconds = (elapsed_time_ms % 60000) // 1000
+        clock_text = self.font.render(f'Tiempo transcurrido: {elapsed_minutes:02}:{elapsed_seconds:02}', True, (color_font))
         self.display.blit(clock_text, (50, 50))
 
         # Mostrar la puntuación

@@ -2,7 +2,7 @@ import tkinter as tk
 import pandas as pd
 import hashlib
 from tkinter import messagebox
-from Check_passwords import LogIn
+from Check_passwords import LogIn, Register
 
 class GUI:
     def __init__(self):
@@ -45,11 +45,21 @@ class GUI:
         self.password = tk.Entry(self.root, font = ('Lucida Console', 16), show = '*')
         self.password.pack()
 
-        self.button = tk.Button(self.root, text = "Registro", font = ('Lucida Console', 16))
+        self.quest = tk.Entry(self.root, font = ('Lucida Console', 16))
+        self.quest.pack()
+
+        self.answ = tk.Entry(self.root, font = ('Lucida Console', 16))
+        self.answ.pack()
+
+        self.button = tk.Button(self.root, text = "Registro", font = ('Lucida Console', 16), command = self.register)
         self.button.pack()
 
     def check_password(self):
-            LogIn(self.user.get(), self.password.get())
+        LogIn(self.user.get().lower(), self.password.get()) == True
+        
+    def register(self):
+         if Register(self.user.get().lower(), self.password.get(), self.quest.get(), self.answ.get().lower()) == True:
+             self.login_screen()
 
 
 GUI()

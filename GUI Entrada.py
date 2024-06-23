@@ -18,8 +18,9 @@ class GUI:
     
     def show_message(self):
         if self.user.get() == "Alberto":
-            game = Game()
-            game.run()
+            print("Alberto")
+            #game = Game()
+            #game.run()
         else:
             messagebox.showinfo(title = "Message", message = 'Nope')
 

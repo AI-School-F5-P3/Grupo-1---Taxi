@@ -124,6 +124,9 @@ class Taximetro:
             self.car_position += 2  # Ajusta la velocidad del coche según sea necesario
             if self.car_position > 1600:  # 1600 es el ancho de la pantalla
                 self.car_position = -self.car.get_width()  # Aparecer en el otro lado
+            self.score += 0.05 / 60 # Precio en movimiento por segundo
+        else:
+            self.score += 0.02 /60 # Precio en parado por segundo
 
         self.display.blit(self.car, (self.car_position, 700))
 
@@ -135,7 +138,7 @@ class Taximetro:
         self.display.blit(clock_text, (50, 50))
 
         # Mostrar la puntuación
-        score_text = self.font.render(f'Precio: {self.score}', True, (color_font))
+        score_text = self.font.render(f'Precio: {round(self.score, 1)} €', True, (color_font))
         self.display.blit(score_text, (50, 100))
 
 class gameStateManager:

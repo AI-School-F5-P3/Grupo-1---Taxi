@@ -1,5 +1,8 @@
 import tkinter as tk
-from Check_passwords import LogIn, Register, Pregunta, Respuesta
+from tkinter import messagebox
+from Check_passwords import LogIn, Register, Pregunta, Respuesta, Descuentos
+from IU_Class import init_game
+
 
 class GUI:
     def __init__(self):
@@ -81,8 +84,8 @@ class GUI:
         self.answ = tk.Entry(self.root, font=('Lucida Console', 16))
         self.answ.pack(pady=10)
 
-        self.label_empty = tk.Label(self.root, text="Seleccione tipo de conductor:", font=('Lucida Console', 16), bg='#541388', fg='white')
-        self.label_empty.pack(pady=5)
+        self.label_dropdown = tk.Label(self.root, text="Seleccione tipo de conductor:", font=('Lucida Console', 16), bg='#541388', fg='white')
+        self.label_dropdown.pack(pady=5)
 
         # Lista vacía para el menú desplegable
         options = ["Taxista", "VTC"]
@@ -136,11 +139,15 @@ class GUI:
         self.back.pack(pady=10)
 
     def check_password(self):
-        LogIn(self.user.get().lower(), self.password.get())
-        self.discount_screen()
+        log = LogIn(self.user.get().lower(), self.password.get())
+        user = self.user.get()
+        if log:
+            self.discount_screen(user)
+        else:
+            messagebox.showinfo(title = "Error", message = "Nombre de usuario o contraseña equivocados")
 
     def register(self):
-        if Register(self.user.get().lower(), self.password.get(), self.quest.get(), self.answ.get().lower()) == True:
+        if Register(self.user.get().lower(), self.password.get(), self.quest.get(), self.answ.get().lower(), self.selected_option.get()) == True:
             self.login_screen()
 
     def get_quest(self):
@@ -149,8 +156,9 @@ class GUI:
     def change_pswd(self):
         Respuesta(self.user.get().lower(), self.answer.get().lower(), self.new_pswd.get())
 
-    def discount_screen(self):
+    def discount_screen(self, user):
         self.clear_screen()
+        self.user = user
 
         self.label = tk.Label(self.root, text="Descuentos", font=('Lucida Console', 20), bg='#541388', fg='white')
         self.label.pack(pady=20)
@@ -167,13 +175,16 @@ class GUI:
         self.discount_moving = tk.Entry(self.root, font=('Lucida Console', 16))
         self.discount_moving.pack(pady=10)
         
-        self.submit = tk.Button(self.root, text="Guardar", command=self.save_discounts, **self.style_button)
+        self.submit = tk.Button(self.root, text="Guardar", command=lambda: self.save_discounts(self.user), **self.style_button)
         self.submit.pack(pady=20)
     
-    def save_discounts(self):
+    def save_discounts(self, user):
+        self.user = user
         stopped_discount = self.discount_stopped.get()
         moving_discount = self.discount_moving.get()
-        print(f"Descuento parado: {stopped_discount}, Descuento movimiento: {moving_discount}")
+        Descuentos(self.user.lower(), stopped_discount, moving_discount)
+        messagebox.showinfo(title = "Exito", message = "Descuentos aplicados")
+        init_game(self.user)
         # Aquí puedes agregar la lógica para manejar los valores de descuento ingresados
 
 

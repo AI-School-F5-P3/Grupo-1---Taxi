@@ -19,7 +19,7 @@ class Game:
         self.gameStateManager = gameStateManager('start')
         self.start = Start(self.screen, self.gameStateManager)
         self.intro = Intro(self.screen, self.gameStateManager)
-        self.taximetro = Taximetro(self.screen, self.gameStateManager)
+        self.taximetro = Taximetro(self.screen, self.gameStateManager, self.user)
         self.pantalla_fin = pantalla_fin(self.screen, self.gameStateManager, self.user)
         self.quit = Quit(self.screen, self.gameStateManager)
 
@@ -108,7 +108,8 @@ class Intro:
         self.display.blit(texto, (100, 100))
 
 class Taximetro:
-    def __init__(self, display, gameStateManager):
+    def __init__(self, display, gameStateManager, user):
+        self.user = user
         self.display = display
         self.gameStateManager = gameStateManager
         self.car = pygame.image.load('Graficos/car1.png')
@@ -117,6 +118,29 @@ class Taximetro:
         self.font = pygame.font.SysFont('Lucida Console', 30)
         self.start_time = None  # Inicializamos start_time como None
         self.score = 0
+        self.datos_usuarios = pd.read_csv("Usuarios.csv")
+        self.update_tarifas()
+
+    def update_tarifas(self):
+        user_info = self.datos_usuarios[self.datos_usuarios["Usuarios"] == self.user].iloc[0]
+        licencia = user_info["Licencia"]
+
+        if licencia == 'Taxista':
+            turno = user_info["Turno"]
+            if turno == 'Nocturno':
+                self.porc = user_info["Tarifa extra"]
+                self.tarifa_mov = 0.05+(0.05*(int(self.porc)/100))
+                self.tarifa_par = 0.02+(0.02*(int(self.porc)/100))
+            else:
+                self.tarifa_mov = 0.05
+                self.tarifa_par = 0.02
+        else:
+            disc_mov = user_info["Descuento Movimiento"]
+            disc_stp = user_info["Descuento Parado"]
+
+            self.tarifa_mov = 0.05-(0.05*(int(disc_mov)/100))
+            self.tarifa_par = 0.02-(0.02*(int(disc_stp)/100))
+
 
     def handle_events(self, event):
         if event.type == pygame.KEYDOWN:
@@ -137,9 +161,9 @@ class Taximetro:
                 self.car_position += 5  # Ajusta la velocidad del coche según sea necesario
                 if self.car_position > 1600:  # 1600 es el ancho de la pantalla
                     self.car_position = -self.car.get_width()  # Aparecer en el otro lado
-                self.score += 0.05 / 60  # Incrementar la puntuación por segundo en movimiento
+                self.score += self.tarifa_mov / 60  # Incrementar la puntuación por segundo en movimiento
             else:
-                self.score += 0.02 / 60  # Incrementar la puntuación por segundo en parado
+                self.score += self.tarifa_par / 60  # Incrementar la puntuación por segundo en parado
 
             self.display.blit(self.car, (self.car_position, 700))
 
@@ -279,5 +303,5 @@ class Quit:
         exit()
 
 def init_game(user):
-    game = Game('Alberto')
+    game = Game(user)
     game.run()

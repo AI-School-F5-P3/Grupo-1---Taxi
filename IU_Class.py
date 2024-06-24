@@ -64,7 +64,7 @@ class Start:
     def run(self):
         # Variables generales
         a, b = pygame.mouse.get_pos()
-        login_screen = pygame.image.load('Graficos/base_2.jpeg')
+        login_screen = pygame.image.load('Graficos/start_p.jpeg')
         font = pygame.font.SysFont('Lucida Console', 70)
         color_font = (200, 245, 10, 1)
         color_rect_hover = (91, 23, 202, 0.8)
@@ -102,17 +102,17 @@ class Intro:
                 self.gameStateManager.get_states()['taximetro'].start_time = time.time()
 
     def run(self):
-        fondo = pygame.image.load('Graficos/base_2.jpeg')
+        fondo = pygame.image.load('Graficos/tuto.jpeg')
         self.display.blit(fondo, (0, 0))
-        texto = pygame.image.load('Graficos/Intro_text (Mediana).png')
-        self.display.blit(texto, (100, 100))
+        texto = pygame.image.load('Graficos/Texto intro.png')
+        self.display.blit(texto, (175, 100))
 
 class Taximetro:
     def __init__(self, display, gameStateManager, user):
         self.user = user
         self.display = display
         self.gameStateManager = gameStateManager
-        self.car = pygame.image.load('Graficos/car1.png')
+        self.car = pygame.image.load('Graficos/car.png')
         self.car_position = 20
         self.car_mov = False
         self.font = pygame.font.SysFont('Lucida Console', 30)
@@ -160,7 +160,7 @@ class Taximetro:
 
     def run(self):
         self.create_csv_if_not_exists('Carreras.csv')
-        
+
         first_screen = pygame.image.load('Graficos/base_2.jpeg')
         self.display.blit(first_screen, (0, 0))
         color_font = (200, 245, 10, 1)
@@ -174,7 +174,7 @@ class Taximetro:
             else:
                 self.score += self.tarifa_par / 60  # Incrementar la puntuación por segundo en parado
 
-            self.display.blit(self.car, (self.car_position, 700))
+            self.display.blit(self.car, (self.car_position, 600))
 
             # Calcular el tiempo transcurrido en minutos y segundos
             elapsed_time_s = time.time() - self.start_time
@@ -248,16 +248,16 @@ class pantalla_fin:
 
     def precio_final(self):
         a, b = pygame.mouse.get_pos()
-        login_screen = pygame.image.load('Graficos/base_2.jpeg')
+        login_screen = pygame.image.load('Graficos/fin.jpeg')
         font = pygame.font.SysFont('Lucida Console', 70)
         color_font = (200, 245, 10, 1)
         color_rect_hover = (91, 23, 202, 0.8)
         color_rect_base = (65, 0, 168, 0.9)
         # Botón Start
-        self.login_button_rect = pygame.Rect(350, 400, 875, 80)
+        self.login_button_rect = pygame.Rect(400, 400, 850, 80)
         login_text = font.render('Empezar otra carrera', True, color_font)
         # Botón Quit
-        self.quit_button_rect = pygame.Rect(700, 650, 180, 80)
+        self.quit_button_rect = pygame.Rect(725, 650, 180, 80)
         quit_text = font.render('Quit', True, color_font)
         self.display.blit(login_screen, (0, 0))
         if self.quit_button_rect.collidepoint((a, b)):

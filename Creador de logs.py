@@ -12,6 +12,8 @@ def creador_logs():
                         level = logging.INFO,  #nivel mínimo para el que va a generarse logs (mirar tabla https://docs.python.org/3/library/logging.html#levels)
                         format='%(asctime)s - %(levelname)s - %(message)s', #formato de presentación del log, asctime será la hora, levelname el nombre del nivel del mensaje y message el mensaje que nosotros asignemos
                         datefmt='%d/%m/%Y %I:%M:%S: %p') #formato de fecha, puesto para día, mes, año, hora, minuto, segundo y AM o PM.
+    
+
     return logger
 
 
@@ -32,3 +34,21 @@ def taximetro():
         logger.error("Se ha producido un error")
 
 taximetro()
+
+
+def setup_logger():
+    logger = logging.getLogger('taxi_app')
+    logger.setLevel(logging.DEBUG)
+    fh = logging.FileHandler('taxi_app.log')
+    fh.setLevel(logging.DEBUG)
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.ERROR)
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    fh.setFormatter(formatter)
+    ch.setFormatter(formatter)
+    logger.addHandler(fh)
+    logger.addHandler(ch)
+    return logger
+
+logger = setup_logger()
+

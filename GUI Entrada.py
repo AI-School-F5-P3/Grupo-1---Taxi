@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
-from Check_passwords import LogIn, Register, Pregunta, Respuesta, Descuentos
+from Check_passwords import LogIn, Register, Pregunta, Respuesta, Descuentos, Descuentos_taxi
 from IU_Class import init_game
 
 
@@ -141,10 +141,13 @@ class GUI:
     def check_password(self):
         log = LogIn(self.user.get().lower(), self.password.get())
         user = self.user.get()
-        if log:
-            self.discount_screen(user)
-        else:
+        if log == False:
             messagebox.showinfo(title = "Error", message = "Nombre de usuario o contraseña equivocados")
+        else:
+            if log == 'VTC':
+                self.discount_screen(user)
+            elif log == 'Taxista':
+                self.turno_screen(user)
 
     def register(self):
         if Register(self.user.get().lower(), self.password.get(), self.quest.get(), self.answ.get().lower(), self.selected_option.get()) == True:
@@ -155,6 +158,34 @@ class GUI:
     
     def change_pswd(self):
         Respuesta(self.user.get().lower(), self.answer.get().lower(), self.new_pswd.get())
+
+    def turno_screen(self, user):
+        self.clear_screen()
+        self.user = user
+
+        self.label = tk.Label(self.root, text="Tarifas", font=('Lucida Console', 20), bg='#541388', fg='white')
+        self.label.pack(pady=20)
+        
+        self.label1 = tk.Label(self.root, text="Turno", font=('Lucida Console', 16), bg='#541388', fg='white')
+        self.label1.pack(pady=10)
+
+        options = ["Diurno", "Nocturno"]
+        self.turno = tk.StringVar()
+        self.turno.set("")
+
+        self.dropdown = tk.OptionMenu(self.root, self.turno, *options)
+        self.dropdown.config(font=('Lucida Console', 16), bg='#C8F50A', fg='#4100A8', width=20)
+        self.dropdown.pack(pady=5)
+        
+        
+        self.label2 = tk.Label(self.root, text="Porcentaje de aumento de tarifa (solo para noche)", font=('Lucida Console', 16), bg='#541388', fg='white')
+        self.label2.pack(pady=10)
+        
+        self.tarifa_extra = tk.Entry(self.root, font=('Lucida Console', 16))
+        self.tarifa_extra.pack(pady=10)
+        
+        self.submit = tk.Button(self.root, text="Guardar", command=lambda: self.save_discounts_t(self.user), **self.style_button)
+        self.submit.pack(pady=20)
 
     def discount_screen(self, user):
         self.clear_screen()
@@ -186,6 +217,14 @@ class GUI:
         messagebox.showinfo(title = "Exito", message = "Descuentos aplicados")
         init_game(self.user)
         # Aquí puedes agregar la lógica para manejar los valores de descuento ingresados
+    
+    def save_discounts_t(self, user):
+        self.user = user
+        turno = self.turno.get()
+        tarifa_extra = self.tarifa_extra.get()
+        Descuentos_taxi(self.user.lower(), turno, tarifa_extra)
+        messagebox.showinfo(title = "Exito", message = "Descuentos aplicados")
+        init_game(self.user)
 
 
 GUI()

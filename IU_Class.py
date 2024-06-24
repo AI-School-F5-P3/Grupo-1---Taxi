@@ -300,6 +300,12 @@ class Quit:
         self.display = display
         self.gameStateManager = gameStateManager
 
+    def handle_events(self, event):
+        # En esta clase solo manejamos el evento de pygame.QUIT
+        if event.type == pygame.QUIT:
+            self.gameStateManager.set_state('quit')
+
+
     def handle_quit(self):
         self.gameStateManager.set_state('quit')
 

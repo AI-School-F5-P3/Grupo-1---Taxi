@@ -178,6 +178,11 @@ class Taximetro:
             score_text = self.font.render(f'Precio: {round(self.score, 2)} €', True, (color_font))
             self.display.blit(score_text, (50, 100))
 
+            tarifa_mov_text = self.font.render(f'Tarifa en movimiento: {round(self.tarifa_mov, 2)}', True, (color_font))
+            self.display.blit(tarifa_mov_text, (50, 150))
+            tarifa_stp_text = self.font.render(f'Tarifa en parado: {round(self.tarifa_par, 2)}', True, (color_font))
+            self.display.blit(tarifa_stp_text, (50, 200))
+
     def reset(self):
         self.start_time = time.time()
         self.score = 0
@@ -240,10 +245,10 @@ class pantalla_fin:
         color_rect_hover = (91, 23, 202, 0.8)
         color_rect_base = (65, 0, 168, 0.9)
         # Botón Start
-        self.login_button_rect = pygame.Rect(500, 400, 650, 80)
+        self.login_button_rect = pygame.Rect(350, 400, 875, 80)
         login_text = font.render('Empezar otra carrera', True, color_font)
         # Botón Quit
-        self.quit_button_rect = pygame.Rect(730, 650, 180, 80)
+        self.quit_button_rect = pygame.Rect(700, 650, 180, 80)
         quit_text = font.render('Quit', True, color_font)
         self.display.blit(login_screen, (0, 0))
         if self.quit_button_rect.collidepoint((a, b)):

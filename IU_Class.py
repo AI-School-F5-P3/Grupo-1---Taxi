@@ -254,7 +254,7 @@ class pantalla_fin:
         color_rect_hover = (91, 23, 202, 0.8)
         color_rect_base = (65, 0, 168, 0.9)
         # Botón Start
-        self.login_button_rect = pygame.Rect(400, 400, 850, 80)
+        self.login_button_rect = pygame.Rect(400, 500, 850, 80)
         login_text = font.render('Empezar otra carrera', True, color_font)
         # Botón Quit
         self.quit_button_rect = pygame.Rect(725, 650, 180, 80)

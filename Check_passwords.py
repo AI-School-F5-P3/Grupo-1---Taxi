@@ -16,7 +16,7 @@ def LogIn(username, password):
         tk.messagebox.showinfo(title = "Error", message = "Usuario o contraseña incorrecta")
     
     else:
-        init_game()
+        init_game(username)
 
 def Register(username, password, s_quest, s_answer):
     datos_usuarios = pd.read_csv("Usuarios.csv")

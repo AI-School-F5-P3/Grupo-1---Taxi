@@ -3,7 +3,6 @@ from tkinter import messagebox
 from Check_passwords import LogIn, Register, Pregunta, Respuesta, Descuentos, Descuentos_taxi
 from IU_Class import init_game
 
-
 class GUI:
     def __init__(self):
         self.root = tk.Tk()

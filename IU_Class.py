@@ -141,6 +141,13 @@ class Taximetro:
             self.tarifa_mov = 0.05-(0.05*(int(disc_mov)/100))
             self.tarifa_par = 0.02-(0.02*(int(disc_stp)/100))
 
+    def create_csv_if_not_exists(self, filename):
+        try:
+            pd.read_csv(filename)  # Intentar cargar el archivo
+        except FileNotFoundError:
+            # El archivo no existe, crearlo con un DataFrame vacío y guardar
+            df = pd.DataFrame(columns=['Usuario', 'Fecha', 'Tiempo_Minutos', 'Tiempo_Segundos', 'Precio'])
+            df.to_csv(filename, index=False)
 
     def handle_events(self, event):
         if event.type == pygame.KEYDOWN:
@@ -152,6 +159,8 @@ class Taximetro:
                 self.gameStateManager.set_state('pantalla_fin')
 
     def run(self):
+        self.create_csv_if_not_exists('Carreras.csv')
+        
         first_screen = pygame.image.load('Graficos/base_2.jpeg')
         self.display.blit(first_screen, (0, 0))
         color_font = (200, 245, 10, 1)

@@ -213,6 +213,10 @@ class GUI:
         self.user = user.lower()
         stopped_discount = self.discount_stopped.get()
         moving_discount = self.discount_moving.get()
+
+        stopped_discount = stopped_discount if stopped_discount else 0
+        moving_discount = moving_discount if moving_discount else 0
+
         Descuentos(self.user.lower(), stopped_discount, moving_discount)
         messagebox.showinfo(title = "Exito", message = "Descuentos aplicados")
         init_game(self.user)
@@ -222,6 +226,9 @@ class GUI:
         self.user = user.lower()
         turno = self.turno.get()
         tarifa_extra = self.tarifa_extra.get()
+
+        tarifa_extra = tarifa_extra if tarifa_extra else '0'
+
         Descuentos_taxi(self.user.lower(), turno, tarifa_extra)
         messagebox.showinfo(title = "Exito", message = "Descuentos aplicados")
         init_game(self.user)

@@ -210,7 +210,7 @@ class GUI:
         self.submit.pack(pady=20)
     
     def save_discounts(self, user):
-        self.user = user
+        self.user = user.lower()
         stopped_discount = self.discount_stopped.get()
         moving_discount = self.discount_moving.get()
         Descuentos(self.user.lower(), stopped_discount, moving_discount)
@@ -219,7 +219,7 @@ class GUI:
         # Aquí puedes agregar la lógica para manejar los valores de descuento ingresados
     
     def save_discounts_t(self, user):
-        self.user = user
+        self.user = user.lower()
         turno = self.turno.get()
         tarifa_extra = self.tarifa_extra.get()
         Descuentos_taxi(self.user.lower(), turno, tarifa_extra)

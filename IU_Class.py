@@ -2,7 +2,7 @@ import pygame
 from sys import exit
 import pygame_gui
 import time
-from datetime import date
+from datetime import datetime
 import pandas as pd
 
 class Game:
@@ -20,11 +20,13 @@ class Game:
         self.start = Start(self.screen, self.gameStateManager)
         self.intro = Intro(self.screen, self.gameStateManager)
         self.taximetro = Taximetro(self.screen, self.gameStateManager)
-        self.quit = Quit(self.screen, self.gameStateManager, self.user)
+        self.pantalla_fin = pantalla_fin(self.screen, self.gameStateManager, self.user)
+        self.quit = Quit(self.screen, self.gameStateManager)
 
         self.states = {'start': self.start, 
                        'taximetro': self.taximetro,
                        'intro': self.intro,
+                       'pantalla_fin': self.pantalla_fin,
                        'quit': self.quit}
         
         self.gameStateManager.set_states(self.states)
@@ -123,7 +125,7 @@ class Taximetro:
             elif event.key == pygame.K_p:
                 self.gameStateManager.set_state('start')
             elif event.key == pygame.K_RETURN:
-                self.gameStateManager.set_state('quit')
+                self.gameStateManager.set_state('pantalla_fin')
 
     def run(self):
         first_screen = pygame.image.load('Graficos/base_2.jpeg')
@@ -152,6 +154,12 @@ class Taximetro:
             score_text = self.font.render(f'Precio: {round(self.score, 2)} €', True, (color_font))
             self.display.blit(score_text, (50, 100))
 
+    def reset(self):
+        self.start_time = time.time()
+        self.score = 0
+        self.car_position = 20
+        self.car_mov = False
+
     def get_score(self):
         return self.score
     
@@ -177,7 +185,7 @@ class gameStateManager:
     def set_state(self, state):
         self.currentState = state
 
-class Quit:
+class pantalla_fin:
     def __init__(self, display, gameStateManager, user):
         self.display = display
         self.gameStateManager = gameStateManager
@@ -187,38 +195,89 @@ class Quit:
         self.final_price = 0
         self.total_time = 0
         self.user = user
+        self.csv_updated = False  # Flag para controlar la escritura en el CSV
+        self.time_stopped = False
 
-    def handle_quit(self):
-        self.gameStateManager.set_state('quit')
+    def handle_events(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            a, b = pygame.mouse.get_pos()
+            if self.quit_button_rect.collidepoint((a, b)):
+                self.gameStateManager.set_state('quit')
+            elif self.login_button_rect.collidepoint((a, b)):
+                self.gameStateManager.get_states()['taximetro'].reset()
+                self.gameStateManager.set_state('intro')
+                self.reset()
 
     def precio_final(self):
-        self.display.fill(self.color_background)
+        a, b = pygame.mouse.get_pos()
+        login_screen = pygame.image.load('Graficos/base_2.jpeg')
+        font = pygame.font.SysFont('Lucida Console', 70)
+        color_font = (200, 245, 10, 1)
+        color_rect_hover = (91, 23, 202, 0.8)
+        color_rect_base = (65, 0, 168, 0.9)
+        # Botón Start
+        self.login_button_rect = pygame.Rect(500, 400, 650, 80)
+        login_text = font.render('Empezar otra carrera', True, color_font)
+        # Botón Quit
+        self.quit_button_rect = pygame.Rect(730, 650, 180, 80)
+        quit_text = font.render('Quit', True, color_font)
+        self.display.blit(login_screen, (0, 0))
+        if self.quit_button_rect.collidepoint((a, b)):
+            pygame.draw.rect(self.display, color_rect_hover, self.quit_button_rect)
+        else:
+            pygame.draw.rect(self.display, color_rect_base, self.quit_button_rect)
+
+        if self.login_button_rect.collidepoint((a, b)):
+            pygame.draw.rect(self.display, color_rect_hover, self.login_button_rect)
+        else:
+            pygame.draw.rect(self.display, color_rect_base, self.login_button_rect)   
+
+        self.display.blit(login_text, (self.login_button_rect.x + 5, self.login_button_rect.y + 5))
+        self.display.blit(quit_text, (self.quit_button_rect.x + 5, self.quit_button_rect.y + 5))
         price_text = self.font.render(f'Precio final: {round(self.final_price, 2)}€', True, self.color_font)
         minutos = int(self.total_time // 60)
         segundos = int(self.total_time % 60)
         time_text = self.font.render(f'Tiempo total de carrera: {minutos}m:{segundos}s', True, self.color_font)
-        price_text_rect = price_text.get_rect(center = (800, 350))
-        time_text_rect = time_text.get_rect(center = (800, 450))
+        price_text_rect = price_text.get_rect(center = (800, 250))
+        time_text_rect = time_text.get_rect(center = (800, 350))
         self.display.blit(price_text, price_text_rect)
         self.display.blit(time_text, time_text_rect)
-        pygame.display.update()
-        pygame.time.wait(3000)
 
     def run(self):
-        self.final_price = self.gameStateManager.get_states()['taximetro'].get_score()
-        self.total_time = self.gameStateManager.get_states()['taximetro'].get_total_time()
-        self.tiempo_minutos = self.total_time // 60
-        self.tiempo_segundos = self.total_time % 60
+        if not self.time_stopped:  # Solo para cuando no está detenido aún
+            self.final_price = self.gameStateManager.get_states()['taximetro'].get_score()
+            self.total_time = self.gameStateManager.get_states()['taximetro'].get_total_time()
+            self.time_stopped = True  # Detiene el tiempo al establecerlo la primera vez
+
         self.precio_final()
-        self.today = date.today()
-        self.d1 = self.today.strftime("%d/%m/%Y")
-        datos_usuarios = pd.read_csv('Carreras.csv')
-        df = pd.DataFrame({'Usuario' : [self.user], 'Fecha': [self.d1], 'Tiempo_Minutos' : [self.tiempo_minutos], 'Tiempo_Segundos': [self.tiempo_segundos],'Precio': [round(self.final_price, 2)]})
-        datos_usuarios = pd.concat([datos_usuarios, df], ignore_index = True)
-        datos_usuarios.to_csv('Carreras.csv', index = False)
+        self.today = datetime.now()
+        self.d1 = self.today.strftime("%d/%m/%Y %H:%M:%S")
+
+        if not self.csv_updated:  # Solo actualiza el CSV si no ha sido actualizado aún
+            datos_usuarios = pd.read_csv('Carreras.csv')
+            df = pd.DataFrame({'Usuario': [self.user], 'Fecha': [self.d1], 'Tiempo_Minutos': [int(self.total_time // 60)], 'Tiempo_Segundos': [int(self.total_time % 60)], 'Precio': [round(self.final_price, 2)]})
+            datos_usuarios = pd.concat([datos_usuarios, df], ignore_index = True)
+            datos_usuarios.to_csv('Carreras.csv', index = False)
+            self.csv_updated = True  # Marca el CSV como actualizado
+        
+    def reset(self):
+        self.final_price = 0
+        self.total_time = 0
+        self.time_stopped = False
+        self.csv_updated = False
+
+class Quit:
+    def __init__(self, display, gameStateManager):
+        self.display = display
+        self.gameStateManager = gameStateManager
+
+    def handle_quit(self):
+        self.gameStateManager.set_state('quit')
+
+    def run(self):
         pygame.quit()
         exit()
 
 def init_game(user):
-    game = Game(user)
+    game = Game('Alberto')
     game.run()

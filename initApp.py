@@ -52,6 +52,8 @@ def register_user(datos_usuarios):
     1. Solicita un nombre de usuario y verifica que no esté en uso.
     2. Solicita una contraseña, pregunta secreta y respuesta secreta.
     3. Guarda los datos del nuevo usuario en el archivo CSV.
+    4. Se ha añadido funcionalidad para que distinga el tipo de conductro y añada a la base de datos
+    las tarifas correspondientes
     '''
     try:
         print("Iniciando el registro de usuario")
@@ -63,40 +65,29 @@ def register_user(datos_usuarios):
         password_hash = hashlib.sha256(password.encode('utf-8')).hexdigest()
         secret_q = request_input("Escriba una pregunta que solo usted conozca la respuesta: ").lower()
         secret_a = hashlib.sha256(request_input("Escriba la respuesta a su pregunta secreta: ").encode('utf-8')).hexdigest()
-        #nuevo_usuario = pd.DataFrame({'Usuarios': [user], 'Passwords': [password_hash], 'PreguntaSecreta': [secret_q], 'RespuestaSecreta': [secret_a]})
-        #datos_usuarios = pd.concat([datos_usuarios, nuevo_usuario], ignore_index=True)
-        #datos_usuarios.to_csv(path, index=False)
         
         # Código añadido para que añada las columnas correspondientes al tipo de conductor, 
         # tarifa parado y tarifa en movimiento
+        # Aquí se llamará a la clase correspondiente 
         tipo_conductor = request_input("Escriba el tipo de conductor (VTC o Taxi): ").lower()
-        tarifa_parado = 0.02  # Inicialización de la variable
-        tarifa_movimiento = 0.05  # Inicialización de la variable
-        
+
         if tipo_conductor == "vtc":
             descuento_p = float(request_input("Ingrese el descuento en tarifa parado (%): "))
             descuento_m = float(request_input("Ingrese el descuento en tarifa movimiento (%): "))
-            tarifa_parado_calc = tarifa_parado * (1 - descuento_p / 100)
-            tarifa_movimiento_calc = tarifa_movimiento * (1 - descuento_m / 100)
-            print(f'tarifa parado VTC {tarifa_parado_calc}, tarifa movimiento {tarifa_movimiento_calc}' )
-            #conductor_obj = VTC(descuento_p, descuento_m)
+            #conductor = VTC(descuento_p, descuento_m)
         elif tipo_conductor == "taxi":
             es_noche = request_input("¿Es horario nocturno? (s/n): ").lower()
             if es_noche == "s":
                 prcnt_noche = float(request_input("Ingrese el porcentaje de incremento por nocturnidad (%): "))
-                tarifa_parado_calc = tarifa_parado * (1 + prcnt_noche / 100)
-                tarifa_movimiento_calc = tarifa_movimiento * (1 + prcnt_noche / 100)
-            print(f'tarifa parado taxi {tarifa_parado_calc}, tarifa movimiento {tarifa_movimiento_calc}' )
-            #conductor_obj = taxista(es_noche, prcnt_noche)
+            #conductor = taxista(es_noche, prcnt_noche)
         else:
             print("Tipo de conductor no válido.")
             return
 
-        tarifa_parado = round(tarifa_parado_calc, 2)
-        tarifa_movimiento = round(tarifa_movimiento_calc, 2)
-        print(f'tarifa parado ¿redondeado? {tarifa_parado}, tarifa movimiento {tarifa_movimiento}' )
-        #tarifa_parado = conductor_obj.tarifa_parado
-        #tarifa_movimiento = conductor_obj.tarifa_movimiento
+        tarifa_parado = round(tarifa_parado, 2)
+        tarifa_movimiento = round(tarifa_movimiento, 2)
+        tarifa_parado = conductor.tarifa_parado
+        tarifa_movimiento = conductor.tarifa_movimiento
         
         nuevo_usuario = pd.DataFrame({
             'Usuarios': [user],
@@ -115,6 +106,7 @@ def register_user(datos_usuarios):
         datos_usuarios.to_csv(path, index=False)
         print("Usuario registrado correctamente.")
         register_action(f"Nuevo usuario registrado: {user}")
+        
     except Exception as e:
         print(f"Ha ocurrido un error al registrar usuario: {e}")
         register_action(f"Error al registrar usuario: {e}")

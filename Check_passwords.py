@@ -16,7 +16,7 @@ def LogIn(username, password):
         return False
     
     else:
-        return True
+        return datos_usuarios.loc[datos_usuarios["Usuarios"] == username]["Licencia"].item()
 
 def Register(username, password, s_quest, s_answer, conductor):
     datos_usuarios = pd.read_csv("Usuarios.csv")
@@ -52,6 +52,12 @@ def Respuesta(username, answer, new_pswd):
     
 def Descuentos(username, stop_disc, mov_disc):
     datos_usuarios = pd.read_csv("Usuarios.csv")
-    datos_usuarios.loc[datos_usuarios["Usuarios"] == username, "Decuento Parado"] = int(stop_disc)
+    datos_usuarios.loc[datos_usuarios["Usuarios"] == username, "Descuento Parado"] = int(stop_disc)
     datos_usuarios.loc[datos_usuarios["Usuarios"] == username, "Descuento Movimiento"] = int(mov_disc)
+    datos_usuarios.to_csv('Usuarios.csv', index = False)
+
+def Descuentos_taxi(username, turno, tarifa):
+    datos_usuarios = pd.read_csv("Usuarios.csv")
+    datos_usuarios.loc[datos_usuarios["Usuarios"] == username, "Turno"] = turno
+    datos_usuarios.loc[datos_usuarios["Usuarios"] == username, "Tarifa extra"] = int(tarifa)
     datos_usuarios.to_csv('Usuarios.csv', index = False)

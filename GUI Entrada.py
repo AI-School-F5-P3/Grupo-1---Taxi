@@ -1,7 +1,4 @@
 import tkinter as tk
-import pandas as pd
-import hashlib
-from tkinter import messagebox
 from Check_passwords import LogIn, Register, Pregunta, Respuesta
 
 class GUI:

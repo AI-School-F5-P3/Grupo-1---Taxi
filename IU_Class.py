@@ -2,9 +2,11 @@ import pygame
 from sys import exit
 import pygame_gui
 import time
+from datetime import date
+import pandas as pd
 
 class Game:
-    def __init__(self):
+    def __init__(self, user):
         self.FPS = 60
         self.S_Width = 1600
         self.S_Height = 900
@@ -12,12 +14,13 @@ class Game:
         self.screen = pygame.display.set_mode((self.S_Width, self.S_Height))
         self.clock = pygame.time.Clock()
         self.manager = pygame_gui.UIManager((self.S_Width, self.S_Height))
+        self.user = user
         
         self.gameStateManager = gameStateManager('start')
         self.start = Start(self.screen, self.gameStateManager)
         self.intro = Intro(self.screen, self.gameStateManager)
         self.taximetro = Taximetro(self.screen, self.gameStateManager)
-        self.quit = Quit(self.gameStateManager)
+        self.quit = Quit(self.screen, self.gameStateManager, self.user)
 
         self.states = {'start': self.start, 
                        'taximetro': self.taximetro,
@@ -30,8 +33,8 @@ class Game:
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    pygame.quit()
-                    exit()
+                    self.quit.handle_quit()
+
                 # Manejar eventos específicos del estado actual
                 self.states[self.gameStateManager.get_state()].handle_events(event)
             
@@ -39,7 +42,7 @@ class Game:
 
             pygame.display.update()
             self.clock.tick(self.FPS)
-
+        
 class Start:
     def __init__(self, display, gameStateManager):
         self.display = display
@@ -119,6 +122,8 @@ class Taximetro:
                 self.car_mov = not self.car_mov
             elif event.key == pygame.K_p:
                 self.gameStateManager.set_state('start')
+            elif event.key == pygame.K_RETURN:
+                self.gameStateManager.set_state('quit')
 
     def run(self):
         first_screen = pygame.image.load('Graficos/base_2.jpeg')
@@ -147,6 +152,14 @@ class Taximetro:
             score_text = self.font.render(f'Precio: {round(self.score, 2)} €', True, (color_font))
             self.display.blit(score_text, (50, 100))
 
+    def get_score(self):
+        return self.score
+    
+    def get_total_time(self):
+        if self.start_time is None:
+            return 0
+        return time.time() - self.start_time
+
 class gameStateManager:
     def __init__(self, currentState):
         self.currentState = currentState
@@ -165,12 +178,47 @@ class gameStateManager:
         self.currentState = state
 
 class Quit:
-    def __init__(self, gameStateManager):
+    def __init__(self, display, gameStateManager, user):
+        self.display = display
         self.gameStateManager = gameStateManager
+        self.font = pygame.font.SysFont('Lucida Console', 70)
+        self.color_font = (200, 245, 10, 1)
+        self.color_background = (65, 0, 168, 0.9)
+        self.final_price = 0
+        self.total_time = 0
+        self.user = user
+
+    def handle_quit(self):
+        self.gameStateManager.set_state('quit')
+
+    def precio_final(self):
+        self.display.fill(self.color_background)
+        price_text = self.font.render(f'Precio final: {round(self.final_price, 2)}€', True, self.color_font)
+        minutos = int(self.total_time // 60)
+        segundos = int(self.total_time % 60)
+        time_text = self.font.render(f'Tiempo total de carrera: {minutos}m:{segundos}s', True, self.color_font)
+        price_text_rect = price_text.get_rect(center = (800, 350))
+        time_text_rect = time_text.get_rect(center = (800, 450))
+        self.display.blit(price_text, price_text_rect)
+        self.display.blit(time_text, time_text_rect)
+        pygame.display.update()
+        pygame.time.wait(3000)
+
     def run(self):
+        self.final_price = self.gameStateManager.get_states()['taximetro'].get_score()
+        self.total_time = self.gameStateManager.get_states()['taximetro'].get_total_time()
+        self.tiempo_minutos = self.total_time // 60
+        self.tiempo_segundos = self.total_time % 60
+        self.precio_final()
+        self.today = date.today()
+        self.d1 = self.today.strftime("%d/%m/%Y")
+        datos_usuarios = pd.read_csv('Carreras.csv')
+        df = pd.DataFrame({'Usuario' : [self.user], 'Fecha': [self.d1], 'Tiempo_Minutos' : [self.tiempo_minutos], 'Tiempo_Segundos': [self.tiempo_segundos],'Precio': [round(self.final_price, 2)]})
+        datos_usuarios = pd.concat([datos_usuarios, df], ignore_index = True)
+        datos_usuarios.to_csv('Carreras.csv', index = False)
         pygame.quit()
         exit()
 
-def init_game():
-    game = Game()
+def init_game(user):
+    game = Game(user)
     game.run()

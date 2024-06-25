@@ -65,19 +65,19 @@ def Register(username, password, s_quest, s_answer, conductor):
             messagebox.showinfo(title="Error", message="Debe introducir un nombre de usuario.")
             logger.error('Nombre usuario vacio.')
             return False
-        if len(password) < 4:
+        elif len(password) < 4:
             messagebox.showinfo(title="Error", message="Debe introducir una contraseña correcta de al menos 4 caracteres.")
-            logger.error('Contraseña incorrecta.')
+            logger.error('Contraseña demasiado corta.')
             return False
-        if not s_quest:
+        elif not s_quest:
             messagebox.showinfo(title="Error", message="La pregunta secreta es obligatoria.")
             logger.error('Pregunta secreta vacía.')
             return False
-        if not s_answer:
+        elif not s_answer:
             messagebox.showinfo(title="Error", message="La respuesta secreta es obligatoria.")
             logger.error('Respuesta secreta vacía.')
             return False
-        if not conductor:
+        elif not conductor:
             messagebox.showinfo(title="Error", message="Seleccione tipo de conductor.")
             logger.error('No se ha seleccionado el tipo de conductor.')
             return False
@@ -92,8 +92,14 @@ def Register(username, password, s_quest, s_answer, conductor):
 
 
 def Pregunta(username):
+    username = username.lower()
+
     datos_usuarios = pd.read_csv("Usuarios.csv")
-    if not datos_usuarios.Usuarios.isin([username]).any():
+    if not username:
+        messagebox.showinfo(title="Error", message="Debe introducir un nombre de usuario.")
+        logger.error('Nombre de usuario vacío.')
+        return False
+    elif not datos_usuarios.Usuarios.isin([username]).any():
         messagebox.showinfo(title = "Error", message = "Usuario no encontrado")
         logger.error(f'Usuario {username} no encontrado en la base de datos') # Control de log
     else:
@@ -116,7 +122,7 @@ def Respuesta(username, answer, new_pswd):
         logger.error('Nombre de usuario vacío.')
         return False
 
-    if not answer:
+    elif not answer:
         messagebox.showinfo(title="Error", message="Debe introducir su respuesta secreta.")
         logger.error('Respuesta secreta vacía.')
         return False
@@ -132,25 +138,57 @@ def Respuesta(username, answer, new_pswd):
     if local_answ == answer:
         if len(new_pswd) < 4:
             messagebox.showinfo(title="Error", message="La contraseña debe tener al menos 4 caracteres.")
+            logger.error('Contraseña demasiado corta.')
             return False
 
         new_pswd_hash = hashlib.sha256(new_pswd.encode('utf-8')).hexdigest()
-        datos_usuarios.loc[datos_usuarios["Usuarios"] == username, "Passwords"] = new_pswd_hash
-        datos_usuarios.to_csv(DB_FILE, index=False)
-        messagebox.showinfo(title="Éxito", message="Contraseña cambiada")
-        logger.info('Contraseña cambiada con éxito')
+        try:
+            datos_usuarios.loc[datos_usuarios["Usuarios"] == username, "Passwords"] = new_pswd_hash
+            datos_usuarios.to_csv(DB_FILE, index=False)
+            messagebox.showinfo(title="Éxito", message="Contraseña cambiada")
+            logger.info('Contraseña cambiada con éxito')
+        except PermissionError:
+            logger.error('No se tienen permisos para acceder a la base de datos.')
+            messagebox.showinfo(title="Error", message="No se tienen permisos para acceder a la base de datos.")
+            return False
+
     else:
         messagebox.showinfo(title="Error", message="Respuesta Incorrecta")
         logger.error('Intento de recuperación de contraseña fallida: Respuesta Secreta Incorrecta')
         
 def Descuentos(username, stop_disc, mov_disc): 
     datos_usuarios = pd.read_csv("Usuarios.csv") 
-    datos_usuarios.loc[datos_usuarios["Usuarios"] == username, "Descuento Parado"] = int(stop_disc) 
-    datos_usuarios.loc[datos_usuarios["Usuarios"] == username, "Descuento Movimiento"] = int(mov_disc)
-    datos_usuarios.to_csv(DB_FILE, index = False) 
+    if type(stop_disc) != int:
+        logger.error('Valor del descuento no es un entero')
+        messagebox.showinfo(title="Error", message="El valor del descuento tiene que ser un número entero (% total)")
+        return False
+    elif type(mov_disc):
+        logger.error('Valor del descuento no es un entero')
+        messagebox.showinfo(title="Error", message="El valor del descuento tiene que ser un número entero (% total)")
+        return False
+        
+    try:
+        datos_usuarios.loc[datos_usuarios["Usuarios"] == username, "Descuento Parado"] = int(stop_disc) 
+        datos_usuarios.loc[datos_usuarios["Usuarios"] == username, "Descuento Movimiento"] = int(mov_disc)
+        datos_usuarios.to_csv(DB_FILE, index = False)
+    except PermissionError:
+        logger.error('No se tienen permisos para acceder a la base de datos.')
+        messagebox.showinfo(title="Error", message="No se tienen permisos para acceder a la base de datos.")
+        return False
+
 
 def Descuentos_taxi(username, turno, tarifa): 
     datos_usuarios = pd.read_csv("Usuarios.csv") 
-    datos_usuarios.loc[datos_usuarios["Usuarios"] == username, "Turno"] = turno 
-    datos_usuarios.loc[datos_usuarios["Usuarios"] == username, "Tarifa extra"] = int(tarifa) 
-    datos_usuarios.to_csv(DB_FILE, index = False)
+    if type(tarifa) != int:
+        logger.error('Valor del descuento no es un entero')
+        messagebox.showinfo(title="Error", message="El valor del descuento tiene que ser un número entero (% total)")
+        return False
+    
+    try:
+        datos_usuarios.loc[datos_usuarios["Usuarios"] == username, "Turno"] = turno 
+        datos_usuarios.loc[datos_usuarios["Usuarios"] == username, "Tarifa extra"] = int(tarifa) 
+        datos_usuarios.to_csv(DB_FILE, index = False)
+    except PermissionError:
+        logger.error('No se tienen permisos para acceder a la base de datos.')
+        messagebox.showinfo(title="Error", message="No se tienen permisos para acceder a la base de datos.")
+        return False

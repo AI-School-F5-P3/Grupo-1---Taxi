@@ -223,8 +223,6 @@ def Tarifa(empresa, tarifa_mov, tarifa_stp):
     datos_usuarios = pd.read_csv("Usuarios.csv")
     try:
         datos_usuarios.loc[datos_usuarios["Empresa"] == empresa, "Tarifa Mov"] = float(tarifa_mov)
-        logger.info(f'Empresa en tarifa: {empresa}')
-        logger.info(f'Empresa en user: {datos_usuarios.loc[datos_usuarios["Empresa"] == empresa]}')
         datos_usuarios.loc[datos_usuarios["Empresa"] == empresa, "Tarifa Stop"] = float(tarifa_stp)
         datos_usuarios.to_csv(DB_FILE, index = False)
         return True

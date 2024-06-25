@@ -1,3 +1,4 @@
 Usuarios,Passwords,Pregunta Secreta,Respuesta Secreta,Licencia,Descuento Parado,Descuento Movimiento,Turno,Tarifa extra
  Test_Case, Test_Case, Test_Case, Test_Case, Test_Case,,,,
-alberto,03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4,Comida favorita,pizza,Taxista,,,Nocturno,100.0
+alberto,03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4,Comida favorita,pizza,Taxista,,,Diurno,0.0
+kaalia,5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5,Color favorito,rojo,VTC,20.0,50.0,,

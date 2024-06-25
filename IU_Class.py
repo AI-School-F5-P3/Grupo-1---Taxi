@@ -16,6 +16,7 @@ class Game:
         self.clock = pygame.time.Clock()
         self.manager = pygame_gui.UIManager((self.S_Width, self.S_Height))
         self.user = user
+        self.empresa = None
 
         logger.info(f'Juego iniciado para usuario: {user}') # Control de log
         
@@ -131,22 +132,24 @@ class Taximetro:
     def update_tarifas(self):
         user_info = self.datos_usuarios[self.datos_usuarios["Usuarios"] == self.user].iloc[0]
         licencia = user_info["Licencia"]
+        tarifa_b_mov = user_info["Tarifa Mov"] if user_info["Tarifa Mov"] else 0.05
+        tarifa_b_stop = user_info["Tarifa Stop"] if user_info["Tarifa Stop"] else 0.02
         logger.info(f'Actualización de tarifas para usuario: {self.user}')
 
         if licencia == 'Taxista':
             turno = user_info["Turno"]
             if turno == 'Nocturno':
                 self.porc = user_info["Tarifa extra"]
-                self.tarifa_mov = 0.05+(0.05*(int(self.porc)/100))
-                self.tarifa_par = 0.02+(0.02*(int(self.porc)/100))
+                self.tarifa_mov = int(tarifa_b_mov)+(int(tarifa_b_mov)*(int(self.porc)/100))
+                self.tarifa_par = int(tarifa_b_stop)+(int(tarifa_b_stop)*(int(self.porc)/100))
             else:
-                self.tarifa_mov = 0.05
-                self.tarifa_par = 0.02
+                self.tarifa_mov = tarifa_b_mov
+                self.tarifa_par = tarifa_b_stop
         else:
             disc_mov = user_info["Descuento Movimiento"]
             disc_stp = user_info["Descuento Parado"]
-            self.tarifa_mov = 0.05-(0.05*(int(disc_mov)/100))
-            self.tarifa_par = 0.02-(0.02*(int(disc_stp)/100))
+            self.tarifa_mov = tarifa_b_mov-(tarifa_b_mov*(int(disc_mov)/100))
+            self.tarifa_par = tarifa_b_stop-(tarifa_b_stop*(int(disc_stp)/100))
 
     def create_csv_if_not_exists(self, filename):
         try:

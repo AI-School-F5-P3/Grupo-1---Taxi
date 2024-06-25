@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
-from emma_Check_passwords import LogIn, Register, Pregunta, Respuesta, Descuentos, Descuentos_taxi
+from emma_Check_passwords import LogIn, Register, Pregunta, Respuesta, Descuentos, Descuentos_taxi, LogIn_Empresa, Tarifa
 from IU_Class import init_game
 from logger_config import logger # Control de Log
 
@@ -10,9 +10,11 @@ class GUI:
         self.root.title("Inicio de Sesión")
         self.root.geometry('800x600')
         self.root.configure(bg='#541388')
-        
+
+        self.empresa = None
+
         self.style_button = {'font': ('Lucida Console', 16), 'bg': '#C8F50A', 'fg': '#541388', 'padx': 20, 'pady': 10, 'bd': 0}
-        
+
         self.p_inicio()
 
         logger.info('Aplicación iniciada') # Control de Log
@@ -23,14 +25,17 @@ class GUI:
 
         self.clear_screen()
 
-        self.inicio = tk.Button(self.root, text="Iniciar Sesión", command=self.login_screen, **self.style_button)
-        self.inicio.pack(pady=75)
+        self.inicio = tk.Button(self.root, text="Inicio Sesión Conductor", command=self.login_screen, **self.style_button)
+        self.inicio.pack(pady=50)
+
+        self.inicio_empresa = tk.Button(self.root, text="Inicio Sesión Empresa", command=self.login_empresa_screen, **self.style_button)
+        self.inicio_empresa.pack(pady=50)
         
         self.reg = tk.Button(self.root, text="Registrarse", command=self.reg_screen, **self.style_button)
-        self.reg.pack(pady=75)
+        self.reg.pack(pady=50)
 
         self.reg = tk.Button(self.root, text="Ayuda", command=self.pantalla_ayuda, **self.style_button)
-        self.reg.pack(pady=75)
+        self.reg.pack(pady=50)
 
     def clear_screen(self):
         for widget in self.root.winfo_children():
@@ -63,31 +68,57 @@ class GUI:
         self.button_back = tk.Button(self.root, text="Atrás", command=self.p_inicio, **self.style_button)
         self.button_back.pack(pady=10)
     
+    def login_empresa_screen(self):
+        self.clear_screen()
+        self.label = tk.Label(self.root, text="Inicie Sesión", font=('Lucida Console', 20), bg='#541388', fg='white')
+        self.label.pack(pady=20)
+        
+
+        self.label_user = tk.Label(self.root, text="Usuario:", font=('Lucida Console', 16), bg='#541388', fg='white')
+        self.label_user.pack(pady=5)
+        self.user = tk.Entry(self.root, font=('Lucida Console', 16))
+        self.user.pack(pady=5)
+        
+        self.label_password = tk.Label(self.root, text="Contraseña:", font=('Lucida Console', 16), bg='#541388', fg='white')
+        self.label_password.pack(pady=5)
+        self.password = tk.Entry(self.root, font=('Lucida Console', 16), show='*')
+        self.password.pack(pady=5)
+        
+        self.button = tk.Button(self.root, text="Iniciar Sesión", command=self.check_password_empresa, **self.style_button)
+        self.button.pack(pady=20)
+        
+        self.button_forgot = tk.Button(self.root, text="Olvidé mi contraseña", command= lambda: tk.messagebox.showinfo(title="Error", message="Debe ponerse en contacto con su responsable de IT."), **self.style_button)
+        self.button_forgot.pack(pady=10)
+
+        self.button_back = tk.Button(self.root, text="Atrás", command=self.p_inicio, **self.style_button)
+        self.button_back.pack(pady=10)
+
+
     def reg_screen(self):
         self.clear_screen()
         
         self.label = tk.Label(self.root, text='Registro', font=('Lucida Console', 20), bg='#541388', fg='white')
-        self.label.pack(pady=20)
+        self.label.pack(pady=10)
         
         self.label_user = tk.Label(self.root, text="Usuario:", font=('Lucida Console', 16), bg='#541388', fg='white')
         self.label_user.pack(pady = 5)
         self.user = tk.Entry(self.root, font=('Lucida Console', 16))
-        self.user.pack(pady=10)
+        self.user.pack(pady=5)
         
         self.label_password = tk.Label(self.root, text="Contraseña", font=('Lucida Console', 16), bg='#541388', fg='white')
         self.label_password.pack(pady = 5)
         self.password = tk.Entry(self.root, font=('Lucida Console', 16), show='*')
-        self.password.pack(pady=10)
+        self.password.pack(pady=5)
         
         self.label_quest = tk.Label(self.root, text="Defina una pregunta secreta para cambiar la contraseña en caso de olvido", font=('Lucida Console', 12), bg='#541388', fg='white')
         self.label_quest.pack(pady = 5)
         self.quest = tk.Entry(self.root, font=('Lucida Console', 16))
-        self.quest.pack(pady=10)
+        self.quest.pack(pady=5)
         
         self.label_answ = tk.Label(self.root, text="Defina una respuesta para su pregunta secreta", font=('Lucida Console', 16), bg='#541388', fg='white')
         self.label_answ.pack(pady = 5)
         self.answ = tk.Entry(self.root, font=('Lucida Console', 16))
-        self.answ.pack(pady=10)
+        self.answ.pack(pady=5)
 
         self.label_dropdown = tk.Label(self.root, text="Seleccione tipo de conductor:", font=('Lucida Console', 16), bg='#541388', fg='white')
         self.label_dropdown.pack(pady=5)
@@ -100,6 +131,20 @@ class GUI:
         self.dropdown = tk.OptionMenu(self.root, self.selected_option, *options)
         self.dropdown.config(font=('Lucida Console', 16), bg='#C8F50A', fg='#4100A8', width=20)
         self.dropdown.pack(pady=5)
+        
+
+        # Lista vacía para el menú desplegable
+        self.label_dropdown_e = tk.Label(self.root, text="Seleccione empresa:", font=('Lucida Console', 16), bg='#541388', fg='white')
+        self.label_dropdown_e.pack(pady=5)
+
+        empresas = ["Uber", "Cabify"]
+        self.empresa_sel = tk.StringVar()
+        self.empresa_sel.set("")
+
+        self.dropdown_e = tk.OptionMenu(self.root, self.empresa_sel, *empresas)
+        self.dropdown_e.config(font=('Lucida Console', 16), bg='#C8F50A', fg='#4100A8', width=20)
+        self.dropdown_e.pack(pady=5)
+
         
         button_frame = tk.Frame(self.root, bg='#791E94')
     
@@ -141,6 +186,43 @@ Despues cuando el inicio de sesión es correcto y no presenta errores se podrán
 
         # Deshabilitar la edición del texto (opcional)
         texto_widget.configure(state='disabled')
+
+    def pantalla_empresa(self):
+        self.clear_screen()
+
+        self.tarifa = tk.Button(self.root, text="Cambiar tarifa", command=self.pantalla_tarifa, **self.style_button)
+        self.tarifa.pack(pady=20)
+
+        self.dash = tk.Button(self.root, text="Acceder al dashboard", command=self.p_inicio, **self.style_button)
+        self.dash.pack(pady=20)
+        logger.info('Pantalla de Empresa')
+
+        self.boton_atras = tk.Button(self.root, text="Atrás", command=self.p_inicio, **self.style_button)
+        self.boton_atras.pack(pady=10)
+
+
+    def pantalla_tarifa(self):
+        self.clear_screen()
+
+        self.tarifa_mov = tk.Label(self.root, text="Cambio tarifa movimiento (p.ej. 0.06€/s)", font=('Lucida Console', 16), bg='#541388', fg='white')
+        self.tarifa_mov.pack(pady= 20)
+
+        self.tarifa_mov_change = tk.Entry(self.root, font=('Lucida Console', 16))
+        self.tarifa_mov_change.pack(pady = 10)
+
+        self.tarifa_stop = tk.Label(self.root, text="Cambio tarifa parado (p.ej. 0.03€/s)", font=('Lucida Console', 16), bg='#541388', fg='white')
+        self.tarifa_stop.pack(pady= 20)
+
+        self.tarifa_stop_change = tk.Entry(self.root, font=('Lucida Console', 16))
+        self.tarifa_stop_change.pack(pady = 10)
+
+        self.submit = tk.Button(self.root, text="Enviar", command=self.set_tarifas, **self.style_button)
+        self.submit.pack(pady=20)
+        logger.info('Pantalla de cambio de tarifas mostrada')
+
+        self.atras = tk.Button(self.root, text="Atrás", command=self.pantalla_empresa, **self.style_button)
+        self.atras.pack(pady=10)
+
 
     def res_pswd(self):
         self.clear_screen()
@@ -190,8 +272,19 @@ Despues cuando el inicio de sesión es correcto y no presenta errores se podrán
 
         logger.info('!Verificación de acceso al sistema exitosa!') # Control de Log
     
+    def check_password_empresa(self):
+        empresa = LogIn_Empresa(self.user.get().lower(), self.password.get())
+        if not empresa:
+            messagebox.showinfo(title = "Error", message = "Nombre de usuario o contraseña equivocados")
+            logger.error(f'¡Intento fallido: Nombre de usuario o contraseña incorrecto!') # Control de log
+        else:
+            self.empresa = empresa
+            self.pantalla_empresa()
+            logger.info('!Verificación de acceso al sistema exitosa!')
+
+    
     def register(self):
-        if Register(self.user.get().lower(), self.password.get(), self.quest.get(), self.answ.get().lower(), self.selected_option.get()) == True:
+        if Register(self.user.get().lower(), self.password.get(), self.quest.get(), self.answ.get().lower(), self.selected_option.get(), self.empresa_sel.get()) == True:
             self.login_screen()
 
     def get_quest(self):
@@ -218,7 +311,6 @@ Despues cuando el inicio de sesión es correcto y no presenta errores se podrán
         self.dropdown.config(font=('Lucida Console', 16), bg='#C8F50A', fg='#4100A8', width=20)
         self.dropdown.pack(pady=5)
         
-        
         self.label2 = tk.Label(self.root, text="Porcentaje de aumento de tarifa (solo para noche)", font=('Lucida Console', 16), bg='#541388', fg='white')
         self.label2.pack(pady=10)
         
@@ -229,6 +321,23 @@ Despues cuando el inicio de sesión es correcto y no presenta errores se podrán
         self.submit.pack(pady=20)
 
         logger.info('Pantalla de turno') # Control de Log
+
+    def set_tarifas(self):
+        logger.info(f'Empresa: {self.empresa}')
+        tarifa_stopped = self.tarifa_mov_change.get()
+        tarifa_mov = self.tarifa_stop_change.get()
+
+        tarifa_stopped = tarifa_stopped if tarifa_stopped else 0.02
+        tarifa_mov = tarifa_mov if tarifa_mov else 0.05
+        logger.info(f'tarifa s: {tarifa_stopped}')
+        logger.info(f'tarifa m: {tarifa_mov}')
+
+        if Tarifa(self.empresa, tarifa_stopped, tarifa_mov):
+            messagebox.showinfo(title = "Exito", message = "Tarifas aplicadas")
+            logger.info('Pantalla de tarifas aplicados') # Control de Log
+            self.p_inicio()
+
+
 
     def discount_screen(self, user):
         self.clear_screen()
@@ -266,7 +375,6 @@ Despues cuando el inicio de sesión es correcto y no presenta errores se podrán
             messagebox.showinfo(title = "Exito", message = "Descuentos aplicados")
             logger.info('Pantalla de Descuentos aplicados') # Control de Log
             init_game(self.user)
-        # Aquí puedes agregar la lógica para manejar los valores de descuento ingresados
        
     
     def save_discounts_t(self, user):

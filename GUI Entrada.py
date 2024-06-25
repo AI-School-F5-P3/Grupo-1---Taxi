@@ -323,14 +323,11 @@ Despues cuando el inicio de sesión es correcto y no presenta errores se podrán
         logger.info('Pantalla de turno') # Control de Log
 
     def set_tarifas(self):
-        logger.info(f'Empresa: {self.empresa}')
         tarifa_stopped = self.tarifa_mov_change.get()
         tarifa_mov = self.tarifa_stop_change.get()
 
         tarifa_stopped = tarifa_stopped if tarifa_stopped else 0.02
         tarifa_mov = tarifa_mov if tarifa_mov else 0.05
-        logger.info(f'tarifa s: {tarifa_stopped}')
-        logger.info(f'tarifa m: {tarifa_mov}')
 
         if Tarifa(self.empresa, tarifa_stopped, tarifa_mov):
             messagebox.showinfo(title = "Exito", message = "Tarifas aplicadas")

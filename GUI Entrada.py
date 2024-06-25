@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
-from Check_passwords import LogIn, Register, Pregunta, Respuesta, Descuentos, Descuentos_taxi
+from emma_Check_passwords import LogIn, Register, Pregunta, Respuesta, Descuentos, Descuentos_taxi
 from IU_Class import init_game
 from logger_config import logger # Control de Log
 
@@ -230,11 +230,10 @@ class GUI:
         stopped_discount = stopped_discount if stopped_discount else 0
         moving_discount = moving_discount if moving_discount else 0
 
-        Descuentos(self.user.lower(), stopped_discount, moving_discount)
-        messagebox.showinfo(title = "Exito", message = "Descuentos aplicados")
-        logger.info('Pantalla de Descuentos aplicados') # Control de Log
-
-        init_game(self.user)
+        if Descuentos(self.user.lower(), stopped_discount, moving_discount):
+            messagebox.showinfo(title = "Exito", message = "Descuentos aplicados")
+            logger.info('Pantalla de Descuentos aplicados') # Control de Log
+            init_game(self.user)
         # Aquí puedes agregar la lógica para manejar los valores de descuento ingresados
        
     
@@ -243,12 +242,12 @@ class GUI:
         turno = self.turno.get()
         tarifa_extra = self.tarifa_extra.get()
 
-        tarifa_extra = tarifa_extra if tarifa_extra else '0'
+        tarifa_extra = tarifa_extra if tarifa_extra else 0
 
-        Descuentos_taxi(self.user.lower(), turno, tarifa_extra)
-        messagebox.showinfo(title = "Exito", message = "Descuentos aplicados")
-        logger.info('Descuentos aplicados con exito') # Control de Log
-        init_game(self.user)
+        if Descuentos_taxi(self.user.lower(), turno, tarifa_extra):
+            messagebox.showinfo(title = "Exito", message = "Descuentos aplicados")
+            logger.info('Descuentos aplicados con exito') # Control de Log
+            init_game(self.user)
 
 
 GUI()

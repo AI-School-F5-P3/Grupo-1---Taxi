@@ -8,7 +8,7 @@ from dashboard import Dashboard
 class GUI:
     def __init__(self):
         self.root = tk.Tk()
-        self.root.title("Inicio de Sesión")
+        self.root.title("Taxea")
         self.root.geometry('800x600')
         self.root.configure(bg='#541388')
 

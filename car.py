@@ -14,6 +14,9 @@ class Game:
         self.S_Height = 900
         pygame.init()
         self.screen = pygame.display.set_mode((self.S_Width, self.S_Height))
+        pygame.display.set_caption("Taxea")
+        self.icon = pygame.image.load('Graficos/logo_cuadrado.png').convert_alpha()
+        pygame.display.set_icon(self.icon)
         self.clock = pygame.time.Clock()
         self.manager = pygame_gui.UIManager((self.S_Width, self.S_Height))
         self.user = user

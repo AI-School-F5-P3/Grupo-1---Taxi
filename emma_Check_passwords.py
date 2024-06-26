@@ -15,6 +15,7 @@ import os
 
 # Constantes
 DB_FILE = "Usuarios.csv"
+Empresa = "Empresa.csv"
 
 # Verificar si la base de datos existe, si no, crear una nueva
 if not os.path.exists(DB_FILE):

@@ -139,7 +139,8 @@ class GUI:
         self.label_dropdown_emp = tk.Label(self.root, text="Seleccione empresa:", font=('Lucida Console', 16), bg='#541388', fg='white')
         self.label_dropdown_emp.pack(pady=5)
 
-        empresas = ["Uber", "Cabify"]
+        empresas = ["Uber", "Cabify", "Bolt", "Confederacion Taxi"]
+
         self.empresa_sel = tk.StringVar()
         self.empresa_sel.set("")
 

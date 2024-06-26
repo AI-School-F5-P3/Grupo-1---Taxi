@@ -187,6 +187,9 @@ Despues cuando el inicio de sesión es correcto y no presenta errores se podrán
         # Deshabilitar la edición del texto (opcional)
         texto_widget.configure(state='disabled')
 
+        self.button_back = tk.Button(self.root, text="Atrás", command=self.p_inicio, **self.style_button)
+        self.button_back.pack(pady=10)
+
     def pantalla_empresa(self):
         self.clear_screen()
 

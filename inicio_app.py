@@ -3,8 +3,6 @@ from tkinter import messagebox
 from funciones_aux import LogIn, Register, Pregunta, Respuesta, Descuentos, Descuentos_taxi, LogIn_Empresa, Tarifa
 from car import init_game
 from logger_config import logger
-import os
-
 
 class GUI:
     def __init__(self):

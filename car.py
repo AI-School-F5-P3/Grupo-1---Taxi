@@ -69,6 +69,7 @@ class Start:
         # Variables generales
         a, b = pygame.mouse.get_pos()
         login_screen = pygame.image.load('Graficos/start_p.jpeg')
+        logo = pygame.image.load('Graficos/logo_big.png')
         font = pygame.font.SysFont('Lucida Console', 70)
         color_font = (200, 245, 10, 1)
         color_rect_hover = (91, 23, 202, 0.8)
@@ -80,6 +81,7 @@ class Start:
         self.quit_button_rect = pygame.Rect(730, 650, 180, 80)
         quit_text = font.render('Quit', True, color_font)
         self.display.blit(login_screen, (0, 0))
+        self.display.blit(logo, (700, 100))
 
         if self.quit_button_rect.collidepoint((a, b)):
             pygame.draw.rect(self.display, color_rect_hover, self.quit_button_rect)

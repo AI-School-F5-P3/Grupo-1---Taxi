@@ -26,16 +26,26 @@ class GUI:
         self.clear_screen()
 
         self.inicio = tk.Button(self.root, text="Inicio Sesión Conductor", command=self.login_screen, **self.style_button)
-        self.inicio.pack(pady=50)
+        self.inicio.pack(pady=30)
 
         self.inicio_empresa = tk.Button(self.root, text="Inicio Sesión Empresa", command=self.login_empresa_screen, **self.style_button)
-        self.inicio_empresa.pack(pady=50)
+        self.inicio_empresa.pack(pady=30)
         
         self.reg = tk.Button(self.root, text="Registrarse", command=self.reg_screen, **self.style_button)
-        self.reg.pack(pady=50)
+        self.reg.pack(pady=30)
 
         self.reg = tk.Button(self.root, text="Ayuda", command=self.pantalla_ayuda, **self.style_button)
-        self.reg.pack(pady=50)
+        self.reg.pack(pady=30)
+
+        self.marco = tk.Frame(self.root, width=150, height=150, bg = '#541388')
+        self.marco.pack()
+        self.marco.place(anchor = 'center', relx = 0.5, rely = 0.85)
+
+        self.logo = tk.PhotoImage(file = 'Graficos/logo_cuadrado.png')
+
+        self.label= tk.Label(self.marco, image = self.logo, bg = '#541388')
+        self.label.pack()
+
 
     def clear_screen(self):
         for widget in self.root.winfo_children():
@@ -60,13 +70,22 @@ class GUI:
         self.password.pack(pady=5)
         
         self.button_login = tk.Button(self.root, text="Iniciar Sesión", command=self.check_password, **self.style_button)
-        self.button_login.pack(pady=20)
+        self.button_login.pack(pady=10)
         
         self.button_forgot = tk.Button(self.root, text="Olvidé mi contraseña", command=self.res_pswd, **self.style_button)
         self.button_forgot.pack(pady=10)
 
         self.button_back = tk.Button(self.root, text="Atrás", command=self.p_inicio, **self.style_button)
         self.button_back.pack(pady=10)
+
+        self.marco = tk.Frame(self.root, width=150, height=150, bg = '#541388')
+        self.marco.pack()
+        self.marco.place(anchor = 'center', relx = 0.5, rely = 0.85)
+
+        self.logo = tk.PhotoImage(file = 'Graficos/logo_cuadrado.png')
+
+        self.label= tk.Label(self.marco, image = self.logo, bg = '#541388')
+        self.label.pack()
     
     def login_empresa_screen(self):
         self.clear_screen()
@@ -85,13 +104,22 @@ class GUI:
         self.password.pack(pady=5)
         
         self.button_login = tk.Button(self.root, text="Iniciar Sesión", command=self.check_password_empresa, **self.style_button)
-        self.button_login.pack(pady=20)
+        self.button_login.pack(pady=10)
         
         self.button_forgot = tk.Button(self.root, text="Olvidé mi contraseña", command= lambda: tk.messagebox.showinfo(title="Error", message="Debe ponerse en contacto con su responsable de IT."), **self.style_button)
         self.button_forgot.pack(pady=10)
 
         self.button_back = tk.Button(self.root, text="Atrás", command=self.p_inicio, **self.style_button)
         self.button_back.pack(pady=10)
+
+        self.marco = tk.Frame(self.root, width=150, height=150, bg = '#541388')
+        self.marco.pack()
+        self.marco.place(anchor = 'center', relx = 0.5, rely = 0.85)
+
+        self.logo = tk.PhotoImage(file = 'Graficos/logo_cuadrado.png')
+
+        self.label= tk.Label(self.marco, image = self.logo, bg = '#541388')
+        self.label.pack()
 
 
     def reg_screen(self):
@@ -204,6 +232,15 @@ Despues cuando el inicio de sesión es correcto y no presenta errores se podrán
         self.button_back = tk.Button(self.root, text="Atrás", command=self.p_inicio, **self.style_button)
         self.button_back.pack(pady=10)
 
+        self.marco = tk.Frame(self.root, width=150, height=150, bg = '#541388')
+        self.marco.pack()
+        self.marco.place(anchor = 'center', relx = 0.5, rely = 0.85)
+
+        self.logo = tk.PhotoImage(file = 'Graficos/logo_cuadrado.png')
+
+        self.label= tk.Label(self.marco, image = self.logo, bg = '#541388')
+        self.label.pack()
+
 
     def pantalla_tarifa(self):
         self.clear_screen()
@@ -226,6 +263,15 @@ Despues cuando el inicio de sesión es correcto y no presenta errores se podrán
 
         self.button_back = tk.Button(self.root, text="Atrás", command=self.pantalla_empresa, **self.style_button)
         self.button_back.pack(pady=10)
+
+        self.marco = tk.Frame(self.root, width=150, height=150, bg = '#541388')
+        self.marco.pack()
+        self.marco.place(anchor = 'center', relx = 0.5, rely = 0.85)
+
+        self.logo = tk.PhotoImage(file = 'Graficos/logo_cuadrado.png')
+
+        self.label= tk.Label(self.marco, image = self.logo, bg = '#541388')
+        self.label.pack()
 
 
     def res_pswd(self):
@@ -324,6 +370,15 @@ Despues cuando el inicio de sesión es correcto y no presenta errores se podrán
         self.submit = tk.Button(self.root, text="Guardar", command=lambda: self.save_discounts_t(self.user), **self.style_button)
         self.submit.pack(pady=20)
 
+        self.marco = tk.Frame(self.root, width=150, height=150, bg = '#541388')
+        self.marco.pack()
+        self.marco.place(anchor = 'center', relx = 0.5, rely = 0.85)
+
+        self.logo = tk.PhotoImage(file = 'Graficos/logo_cuadrado.png')
+
+        self.label= tk.Label(self.marco, image = self.logo, bg = '#541388')
+        self.label.pack()
+
         logger.info('Pantalla de turno') # Control de Log
 
     def set_tarifas(self):
@@ -363,6 +418,15 @@ Despues cuando el inicio de sesión es correcto y no presenta errores se podrán
         
         self.submit = tk.Button(self.root, text="Guardar", command=lambda: self.save_discounts(self.user), **self.style_button)
         self.submit.pack(pady=20)
+
+        self.marco = tk.Frame(self.root, width=150, height=150, bg = '#541388')
+        self.marco.pack()
+        self.marco.place(anchor = 'center', relx = 0.5, rely = 0.85)
+
+        self.logo = tk.PhotoImage(file = 'Graficos/logo_cuadrado.png')
+
+        self.label= tk.Label(self.marco, image = self.logo, bg = '#541388')
+        self.label.pack()
     
         logger.info('Pantalla de Descuento') # Control de Log
 

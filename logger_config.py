@@ -1,6 +1,8 @@
 import logging
+import os
 
 def setup_logger():
+    os.chdir('Grupo-1---Taxi')
     logger = logging.getLogger('taxi_app_logger')
     logger.setLevel(logging.DEBUG)
    

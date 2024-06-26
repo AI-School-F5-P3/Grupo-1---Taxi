@@ -4,6 +4,7 @@ import pygame_gui
 import time
 from datetime import datetime
 import pandas as pd
+import numpy as np
 from logger_config import logger
 
 class Game:
@@ -128,8 +129,8 @@ class Taximetro:
     def update_tarifas(self):
         user_info = self.datos_usuarios[self.datos_usuarios["Usuarios"] == self.user].iloc[0]
         licencia = user_info["Licencia"]
-        tarifa_b_mov = user_info["Tarifa Mov"] if user_info["Tarifa Mov"] else 0.05
-        tarifa_b_stop = user_info["Tarifa Stop"] if user_info["Tarifa Stop"] else 0.02
+        tarifa_b_mov = 0.05 if np.isnan(user_info['Tarifa Mov']) else user_info['Tarifa Mov']
+        tarifa_b_stop = 0.02 if np.isnan(user_info['Tarifa Stop']) else user_info['Tarifa Stop']
         logger.info(f'Actualización de tarifas para usuario: {self.user}')
 
         if licencia == 'Taxista':

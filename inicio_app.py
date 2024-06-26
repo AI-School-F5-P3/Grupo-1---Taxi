@@ -2,7 +2,9 @@ import tkinter as tk
 from tkinter import messagebox
 from funciones_aux import LogIn, Register, Pregunta, Respuesta, Descuentos, Descuentos_taxi, LogIn_Empresa, Tarifa
 from car import init_game
-from logger_config import logger # Control de Log
+from logger_config import logger
+import os
+
 
 class GUI:
     def __init__(self):
@@ -331,8 +333,10 @@ Despues cuando el inicio de sesión es correcto y no presenta errores se podrán
 
         tarifa_stopped = tarifa_stopped if tarifa_stopped else 0.02
         tarifa_mov = tarifa_mov if tarifa_mov else 0.05
+        logger.info(f'Tarifa en parado fijada en {tarifa_stopped}')
+        logger.info(f'Tarifa en movimiento fijada en {tarifa_mov}')
 
-        if Tarifa(self.empresa, tarifa_stopped, tarifa_mov):
+        if Tarifa(self.empresa, tarifa_mov, tarifa_stopped):
             messagebox.showinfo(title = "Exito", message = "Tarifas aplicadas")
             logger.info('Pantalla de tarifas aplicados') # Control de Log
             self.p_inicio()

@@ -16,6 +16,7 @@ import os
 # Constantes
 User_DB = "Usuarios.csv"
 Empresa_DB = "Empresa.csv"
+logger.info("Se crean las variables de bases de datos correctamente")
 
 # Verificar si la base de datos existe, si no, crear una nueva
 if not os.path.exists(User_DB):
@@ -33,11 +34,14 @@ def LogIn(username, password):
 
     username = username.lower()
     password_inp = hashlib.sha256(password.encode('utf-8')).hexdigest()
-    user_info = datos_usuarios[datos_usuarios["Usuarios"] == username].iloc[0]
 
     try:
+        user_info = datos_usuarios[datos_usuarios["Usuarios"] == username].iloc[0]
         password_local = user_info["Passwords"]
     except ValueError:
+        logger.error(f'Usuario {username} no encontrado en la base de datos. ')
+        return False
+    except IndexError:
         logger.error(f'Usuario {username} no encontrado en la base de datos. ')
         return False
 
@@ -59,7 +63,11 @@ def LogIn_Empresa(username, password):
 
     username = username.lower()
     password_inp = hashlib.sha256(password.encode('utf-8')).hexdigest()
-    empresa_info = datos_empresa[datos_empresa["Usuarios"] == username].iloc[0]
+    try: 
+        empresa_info = datos_empresa[datos_empresa["Usuarios"] == username].iloc[0]
+    except IndexError:
+        logger.error(f'Usuario {username} no encontrado')
+        return False
 
     try:
         password_local = empresa_info["Passwords"]
@@ -167,6 +175,10 @@ def Respuesta(username, answer, new_pswd):
         usuarios_info = datos_usuarios[datos_usuarios["Usuarios"] == username].iloc[0]
         local_answ = usuarios_info["Respuesta Secreta"]
     except ValueError:
+        messagebox.showinfo(title="Error", message="Usuario no encontrado o respuesta incorrecta.")
+        logger.error('Usuario no encontrado o respuesta incorrecta.')
+        return False
+    except IndexError:
         messagebox.showinfo(title="Error", message="Usuario no encontrado o respuesta incorrecta.")
         logger.error('Usuario no encontrado o respuesta incorrecta.')
         return False

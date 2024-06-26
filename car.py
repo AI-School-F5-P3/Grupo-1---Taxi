@@ -55,11 +55,7 @@ class Start:
         self.gameStateManager = gameStateManager
 
     def handle_events(self, event):
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_e:
-                self.gameStateManager.set_state('level')
-                logger.info('Cambio de estado a level')
-        elif event.type == pygame.MOUSEBUTTONDOWN:
+        if event.type == pygame.MOUSEBUTTONDOWN:
             a, b = pygame.mouse.get_pos()
             if self.quit_button_rect.collidepoint((a, b)):
                 self.gameStateManager.set_state('quit')
@@ -175,8 +171,8 @@ class Taximetro:
     def run(self):
         self.create_csv_if_not_exists('Carreras.csv')
 
-        first_screen = pygame.image.load('Graficos/base_2.jpeg')
-        self.display.blit(first_screen, (0, 0))
+        run_screen = pygame.image.load('Graficos/base_2.jpeg')
+        self.display.blit(run_screen, (0, 0))
         color_font = (200, 245, 10, 1)
 
         if self.start_time is not None:  # Aseguramos que start_time tenga un valor antes de usarlo

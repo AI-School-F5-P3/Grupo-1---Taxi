@@ -137,16 +137,16 @@ class Taximetro:
             turno = user_info["Turno"]
             if turno == 'Nocturno':
                 self.porc = user_info["Tarifa extra"]
-                self.tarifa_mov = int(tarifa_b_mov)+(int(tarifa_b_mov)*(int(self.porc)/100))
-                self.tarifa_par = int(tarifa_b_stop)+(int(tarifa_b_stop)*(int(self.porc)/100))
+                self.tarifa_mov = float(tarifa_b_mov)+(float(tarifa_b_mov)*(float(self.porc)/100))
+                self.tarifa_par = float(tarifa_b_stop)+(float(tarifa_b_stop)*(float(self.porc)/100))
             else:
                 self.tarifa_mov = tarifa_b_mov
                 self.tarifa_par = tarifa_b_stop
         else:
             disc_mov = user_info["Descuento Movimiento"]
             disc_stp = user_info["Descuento Parado"]
-            self.tarifa_mov = tarifa_b_mov-(tarifa_b_mov*(int(disc_mov)/100))
-            self.tarifa_par = tarifa_b_stop-(tarifa_b_stop*(int(disc_stp)/100))
+            self.tarifa_mov = tarifa_b_mov-(tarifa_b_mov*(float(disc_mov)/100))
+            self.tarifa_par = tarifa_b_stop-(tarifa_b_stop*(float(disc_stp)/100))
 
     def create_csv_if_not_exists(self, filename):
         try:

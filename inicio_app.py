@@ -16,7 +16,7 @@ class GUI:
 
         self.style_button = {'font': ('Lucida Console', 16), 'bg': '#C8F50A', 'fg': '#541388', 'padx': 20, 'pady': 10, 'bd': 0}
 
-        self.p_inicio()
+        self.p_inicio() 
 
         logger.info('Aplicación iniciada') # Control de Log
 
@@ -398,8 +398,8 @@ Se pueden incluir otros casos de uso modificando el archivo 'Empresa.csv'.
         logger.info('Pantalla de turno') # Control de Log
 
     def set_tarifas(self):
-        tarifa_stopped = self.tarifa_mov_change.get()
-        tarifa_mov = self.tarifa_stop_change.get()
+        tarifa_stopped = self.tarifa_stop_change.get()
+        tarifa_mov = self.tarifa_mov_change.get()
 
         tarifa_stopped = tarifa_stopped if tarifa_stopped else 0.02
         tarifa_mov = tarifa_mov if tarifa_mov else 0.05

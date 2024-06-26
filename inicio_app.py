@@ -3,6 +3,7 @@ from tkinter import messagebox
 from funciones_aux import LogIn, Register, Pregunta, Respuesta, Descuentos, Descuentos_taxi, LogIn_Empresa, Tarifa
 from car import init_game
 from logger_config import logger
+from dashboard import Dashboard
 
 class GUI:
     def __init__(self):
@@ -225,7 +226,7 @@ Despues cuando el inicio de sesión es correcto y no presenta errores se podrán
         self.tarifa = tk.Button(self.root, text="Cambiar tarifa", command=self.pantalla_tarifa, **self.style_button)
         self.tarifa.pack(pady=20)
 
-        self.dash = tk.Button(self.root, text="Acceder al dashboard", command=self.p_inicio, **self.style_button)
+        self.dash = tk.Button(self.root, text="Acceder al dashboard", command=self.dashboard, **self.style_button)
         self.dash.pack(pady=20)
         logger.info('Pantalla de Empresa')
 
@@ -273,6 +274,9 @@ Despues cuando el inicio de sesión es correcto y no presenta errores se podrán
         self.label= tk.Label(self.marco, image = self.logo, bg = '#541388')
         self.label.pack()
 
+    def dashboard(self):
+        dashboard = Dashboard()
+        dashboard.init_server()
 
     def res_pswd(self):
         self.clear_screen()

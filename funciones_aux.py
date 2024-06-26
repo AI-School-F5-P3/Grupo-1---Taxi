@@ -60,6 +60,9 @@ def LogIn_Empresa(username, password):
         logger.warning('No se tienen permisos para acceder a la base de datos.')
         #messagebox.showinfo(title="Error", message="No se tienen permisos para acceder a la base de datos.")
         return False
+    except FileNotFoundError:
+        logger.error('No hay empresas registradas en este momento')
+        return False
 
     username = username.lower()
     password_inp = hashlib.sha256(password.encode('utf-8')).hexdigest()

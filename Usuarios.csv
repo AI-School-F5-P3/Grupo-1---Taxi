@@ -1,0 +1,8 @@
+Usuarios,Passwords,Pregunta Secreta,Respuesta Secreta,Licencia,Descuento Parado,Descuento Movimiento,Turno,Tarifa extra,Tarifa Mov,Tarifa Stop,Empresa
+ Test_Case, Test_Case, Test_Case, Test_Case, Test_Case,,,,,,,
+alberto,03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4,Comida favorita,pizza,VTC,0.0,0.0,,,0.1,0.05,uber
+erika,8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92,erika,erika,Taxista,,,Diurno,0.0,,,
+,e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855,,,,,,,,,,
+maria,472bbe83616e93d3c09a79103ae47d8f71e3d35a966d6e8b22f743218d04171d,123,123,,,,,,,,
+21,6b51d431df5d7f141cbececcf79edf3dd861c3b4069f0b11661a3eefacbba918,AAAAAAA,eeeeeee,Taxista,,,,,,,
+,cf04119a706e2c45f587f799676a22b234f349f260e293920a04bdd8e71d73bb,,,Taxista,,,,,,,

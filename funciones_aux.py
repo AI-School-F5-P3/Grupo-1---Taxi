@@ -129,7 +129,7 @@ def Pregunta(username):
     username = username.lower()
 
     datos_usuarios = pd.read_csv("Usuarios.csv")
-    
+
     if not username:
         messagebox.showinfo(title="Error", message="Debe introducir un nombre de usuario.")
         logger.error('Nombre de usuario vacío.')
@@ -138,7 +138,8 @@ def Pregunta(username):
         messagebox.showinfo(title = "Error", message = "Usuario no encontrado")
         logger.error(f'Usuario {username} no encontrado en la base de datos') # Control de log
     else:
-        pregunta_s = datos_usuarios.loc[datos_usuarios["Usuarios"] == username]["Pregunta Secreta"].item()
+        usuarios_info = datos_usuarios[datos_usuarios["Usuarios"] == username].iloc[0]
+        pregunta_s = usuarios_info["Pregunta Secreta"]
         messagebox.showinfo(title = "Pregunta", message = pregunta_s)
 
 def Respuesta(username, answer, new_pswd):
@@ -163,7 +164,8 @@ def Respuesta(username, answer, new_pswd):
         return False
         
     try:
-        local_answ = datos_usuarios.loc[datos_usuarios["Usuarios"] == username]["Respuesta Secreta"].item()
+        usuarios_info = datos_usuarios[datos_usuarios["Usuarios"] == username].iloc[0]
+        local_answ = usuarios_info["Respuesta Secreta"]
     except ValueError:
         messagebox.showinfo(title="Error", message="Usuario no encontrado o respuesta incorrecta.")
         logger.error('Usuario no encontrado o respuesta incorrecta.')

@@ -4,8 +4,8 @@ import os
 def setup_logger():
     cwd = os.getcwd()
     base_folder = os.path.basename(cwd)
-    if base_folder != 'Grupo-1---Taxi':
-        os.chdir('Grupo-1---Taxi')
+    if base_folder != 'Grupo-1---Taxi-main':
+        os.chdir('Grupo-1---Taxi-main')
     logger = logging.getLogger('taxi_app_logger')
     logger.setLevel(logging.DEBUG)
    

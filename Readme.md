@@ -2,8 +2,9 @@
 Descargar el archivo '.zip' pulsando en "CODE" y seleccionando la opción. Extraer el contenido de las carpetas y mantener la misma estructura. La aplicación se inicia ejecutando en VSCode el script 'inicio_app.py'.
 
 IMPORTANTE. Comprobar que la carpeta de trabajo es aquella en la que están todos los archivos del '.zip'. Puede abrirse desde vcode de forma manual, abriendo cartpeta donde estan los archivo .zip o mediante código usando los metodos:
-os.getcwd() -> para obtener la dirección completa del directorio de trabajo
-os.chdir('directorio deseado') -> para cambiar el directorio de trabajo
+
+- os.getcwd() -> para obtener la dirección completa del directorio de trabajo
+- os.chdir('directorio deseado') -> para cambiar el directorio de trabajo
 
 Para poder ejecutar el código se necesita instalar las bibliotecas:
 - tkinter

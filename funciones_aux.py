@@ -5,31 +5,34 @@ from tkinter import messagebox
 from logger_config import logger
 import os
 
-######################################################################################################
-#                                                                                                    #
-# IMPORTANTE:                                                                                        #
-# Para probar el control del Login hay en el módulo "GUI Entrada.py" hay que cambiar a:                #   
-# from emma_Check_password import LogIn, Register, Pregunta, Respuesta, Descuentos, Descuentos_taxi  #  
-#                                                                                                    #
-######################################################################################################
-
-# Constantes
+# Asignación de variables de bases de datos
 User_DB = "Usuarios.csv"
 Empresa_DB = "Empresa.csv"
 logger.info("Se crean las variables de bases de datos correctamente")
 
-# Verificar si la base de datos existe, si no, crear una nueva
+# Se verifica con os.path si la base de datos existe, si no, crear una nueva con pandas
 if not os.path.exists(User_DB):
     logger.warning("La base de datos no existe. Se creará una nueva.")
     df = pd.DataFrame(columns=["Usuarios", "Passwords", "Pregunta Secreta", "Respuesta Secreta", "Licencia", "Descuento Parado", "Descuento Movimiento", "Turno", "Tarifa extra", "Tarifa Mov", "Tarifa Stop", "Empresa"])
     df.to_csv(User_DB, index=False)
 
 def LogIn(username, password):
+    '''
+    Función para iniciar sesión en la interfaz gráfica de tkinter.
+    En primer lugar se intenta capturar el error de que la base de datos no pueda accederse, generalmente se debe a que esté abierta a la vez que se intenta editar.
+    En segundo lugar, para asegurar que el formato siempre es igual, se convierte el nombre de usuario a minúsuclas, y se codifica la contraseña en .sha256.
+    En tercer lugar se intenta catpurar el error de que la base de que el usuario no se encuentre en la base de datos. Para ello se especifican dos errores:
+        - ValueError. El valor introducido es inocrrecto.
+        - IndexError: No se encuentra en el índice el usuario por lo que genera un error de índice (pandas no puede encontrar la instancia en la base).
+    A continuación, una vez se solventan los errores, se comprueba si hay errores en el nombre de usuario o en la contraseña, en cuyo caso el inicio de sesión falla.
+    Si todo ha salido bien, el inicio de sesión ha sido exitoso y se extrae la licencia registrada para ese usuario para su uso en la función principal.
+    Todos los pasos se registran en el archivo de log.
+    '''
     try:
         datos_usuarios = pd.read_csv(User_DB)
     except PermissionError:
         logger.warning('No se tienen permisos para acceder a la base de datos.')
-        #messagebox.showinfo(title="Error", message="No se tienen permisos para acceder a la base de datos.")
+        messagebox.showinfo(title="Error", message="No se tienen permisos para acceder a la base de datos.")
         return False
 
     username = username.lower()

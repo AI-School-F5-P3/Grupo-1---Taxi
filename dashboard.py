@@ -8,9 +8,14 @@ import base64
 import random
 
 # Generar datos aleatorios
-dia = random.choices(range(1, 32), k=10000)
+'''
+Se utiliza el método choices de la biblioteca random (incluida con python) para generar 10000 valores de diferentes categorias. Además se genera una variable de horario que se establece en función de la hora en la que se ha registrado la carrera.
+Para días tecnicamente deberían generarse los valores de días en función del mes, ya que de esta forma todos los meses tienen 31 días, pero para una simulación nos puede valer.
+Una vez se han generado los datos se incluyen en un dataframe de pandas con la misma estructura que el csv que tendríamos de carreras.
+'''
+dia = random.choices(range(1, 32), k=10000) 
 mes = random.choices(range(1, 13), k=10000)
-segundos = random.choices(range(300, 21600), k=10000)
+segundos = random.choices(range(300, 21600), k=10000) 
 precio = random.choices(range(5, 300), k=10000)
 horas = random.choices(range(1, 23), k=10000)
 horario = []
@@ -30,21 +35,21 @@ df = pd.DataFrame({'Dia': dia, 'Mes': mes, 'Segundos': segundos, 'Precio': preci
 df_junio = df.loc[df["Mes"] == 6]
 
 # Cálculos previos
-num_carreras_dia = df_junio.loc[df_junio['Dia'] == 26].shape[0]
-num_carreras_mes = df_junio.shape[0]
-dinero_total_dia = df_junio.loc[df_junio['Dia'] == 26, 'Precio'].sum()
-dinero_total_mes = df_junio['Precio'].sum()
-dinero_medio_dia = df_junio.loc[df_junio['Dia'] == 26, 'Precio'].mean()
-dinero_medio_mes = round(df_junio['Precio'].mean(), 2)
+num_carreras_dia = df_junio.loc[df_junio['Dia'] == 26].shape[0] #shape 0 nos da el número de filas, siendo cada fila una carrera, nos da el total de carreras
+num_carreras_mes = df_junio.shape[0] #shape 0 nos da el número de filas, siendo cada fila una carrera, nos da el total de carreras
+dinero_total_dia = df_junio.loc[df_junio['Dia'] == 26, 'Precio'].sum() #sum nos da el sumatorio de todos los elementos de la columna Precio para el df filtrado por día
+dinero_total_mes = df_junio['Precio'].sum() #sum nos da el sumatorio de todos los elementos de la columna Precio.
+dinero_medio_dia = round(df_junio.loc[df_junio['Dia'] == 26, 'Precio'].mean(), 2) #mean nos da la media de la columna Precio para el df filtrado por día, en este caso redondeada a dos decimales, que es lo que tiene sentido para euros
+dinero_medio_mes = round(df_junio['Precio'].mean(), 2) # mean nos da la media de Precio, en este caso redondeada a dos decimales, que es lo que tiene sentido para euros
 
-# Configurar estilo de seaborn
+# Configurar paleta de colores para los gráficos generados por seaborn
 sns.set_palette("pastel")
 
-# Crear gráficos utilizando Seaborn y Matplotlib
+# tamaño de los gráficos que se van a generar
 plt.figure(figsize=(17, 10))
 
 # Gráfico de línea: Precio medio por mes
-plt.subplot(3, 2, 1)
+plt.subplot(3, 2, 1) # subplot nos permite colocar los gráficos en posiciones concretas
 sns.lineplot(data=df, x='Mes', y='Precio', errorbar=None, color = '#541388')
 plt.title('Precio Medio por Mes')
 
@@ -65,6 +70,17 @@ sns.countplot(data=df_junio, x='Dia', color = '#541388')
 plt.title('Histograma de Carreras por Día en Junio')
 plt.ylabel('Recuento carreras')
 
+# Histograma número de carreras por horario en Junio
+plt.subplot(3, 2, 5)
+sns.countplot(data = df_junio, x = 'Horario', color = '#541388')
+plt.title('Histograma de Carreras según Horario en Junio')
+plt.ylabel('Recuento carreras')
+
+#Gráfico de barras: Media de precio según horario en Junio.
+plt.subplot(3, 2, 6)
+sns.barplot(data = df_junio, x = 'Horario', y = 'Precio', color = '#541388')
+plt.title('Media de precio por Horario en Junio')
+plt.ylabel('Media de Precio')
 # Ajustar diseño y guardar figura en un archivo
 plt.tight_layout()
 plt.savefig('plot.png')  # Guardar el gráfico como imagen PNG
@@ -83,7 +99,7 @@ class Dashboard:
     def __init__(self):
         self.app = dash.Dash(__name__)
         self.server = self.app.server
-# Definir el layout de la aplicación con el fondo gris oscuro
+# Definir el layout de la aplicación con los colores básicos de nuestra aplicación y con la fuente que hemos usado habitualmente.
         self.app.layout = html.Div(style={'backgroundColor': '#541388', 'color': '#C8F50A', 'font-family': 'Lucida Console'}, children=[
             html.H1('Dashboard de Análisis de Carreras', style={'textAlign': 'center'}),
 
@@ -131,4 +147,5 @@ class Dashboard:
         ])
 
     def init_server(self):
+        # Función que inicia el servidor en dash para poder visualizarlo. Para cerrarlo hay que pulsar ctrl+c en la terminal de ejecución de vscode.
         self.app.run_server(debug=False)

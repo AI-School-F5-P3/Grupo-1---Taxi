@@ -245,7 +245,7 @@ def Descuentos(username, stop_disc, mov_disc):
     '''
     Función que aplica, para el usuario con licencia VTC logeado, los descuentos que haya indicado en la pantalla de descuentos. Estos se guardan en formato int(entero) para poder trabajar con ellos correctamente en pygame. Se capturan además los errores de que no se tenga permiso de acceso a la base de datos o de que no se haya incluido un número entero. Podría trabajarse con numeros decimales, pero consideramos que es poco probable que alguien quiera hacer un descuento porcentual con decimales.
     '''
-    datos_usuarios = pd.read_csv("Usuarios.csv") 
+    datos_usuarios = pd.read_csv(User_DB) 
     username = username.lower()
         
     try:
@@ -267,7 +267,7 @@ def Descuentos_taxi(username, turno, tarifa):
     '''
     Función que aplica, para el usuario con licencia de taxi logeado, la tarifa que haya señalado en la pantalla de tarifa. Este se guarda en formato int(entero) para poder trabajar correctamente en pygame. Se capturan además los errores de que no se tenga permiso de acceso a la base de datos o de que no se haya incluido un número entero. Podría trabajarse con numeros decimales, pero consideramos que es poco probable que alguien quiera hacer un descuento porcentual con decimales.
     '''
-    datos_usuarios = pd.read_csv("Usuarios.csv") 
+    datos_usuarios = pd.read_csv(User_DB) 
     username = username.lower()
     try:
         datos_usuarios.loc[datos_usuarios["Usuarios"] == username, "Turno"] = turno 

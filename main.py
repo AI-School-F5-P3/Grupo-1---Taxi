@@ -25,6 +25,10 @@ class GUI:
         logger.info('Aplicación iniciada') # Mensaje que queremos que capture el logger al iniciar
 
         self.root.mainloop() # mainloop define el bucle de funcionamiento de la interfaz, para que no se cierre la aplicación
+    
+    def clear_screen(self): # Funcion para eliminar los widgets
+        for widget in self.root.winfo_children():
+            widget.destroy()
 
     def p_inicio(self): # Pantalla de inicio
         '''
@@ -71,10 +75,6 @@ class GUI:
         self.label.pack()
 
 
-    def clear_screen(self): # Funcion para eliminar los widgets
-        for widget in self.root.winfo_children():
-            widget.destroy()
-
     def login_screen(self): # Pantalla de inicio de sesion de usuarios
         self.clear_screen()
         
@@ -117,7 +117,199 @@ class GUI:
 
         self.label= tk.Label(self.marco, image = self.logo, bg = '#541388')
         self.label.pack()
+
+    def check_password(self):
+        '''
+        Este método llama a una función auxiliar LogIn, explicada en el script de funciones_aux. Esta función devolverá, si todo ha ido bien, si la licencia del usuario es VTC o Taxista, en cuyo caso llevará a la pantalla correspondiente para definir los datos que faltan antes de lanzar el programa, se pasa como argumento el nombre del usuario. Si hay algún problema (contraseña o usuario equivocado, usuario inexistente, etc.) la función devuelve un False, de tal forma que en este punto se mostrara un error al usuario en forma de pop-up indicando que ha cometido algún error al escribir su usuario o contraseña.
+        El nombre de usuario y la contrseña se extraen de la pantalla previa a esta (login_screen) con el método .get.
+        '''
+        tarifa = LogIn(self.user.get(), self.password.get())
+        user = self.user.get()
+        if not Tarifa:
+            messagebox.showinfo(title = "Error", message = "Nombre de usuario o contraseña equivocados")
+            logger.error(f'¡Intento fallido: Nombre de usuario o contraseña incorrecto!') # Control de log
+        else:
+            if tarifa == 'VTC':
+                self.discount_screen(user)
+            elif tarifa == 'Taxista':
+                self.turno_screen(user)
+
+        logger.info('!Verificación de acceso al sistema exitosa!') # Control de Log
+
+    def discount_screen(self, user): # Pantalla para aplicar descuentos en conductores de VTC
+        self.clear_screen()
+        self.user = user
+        # Titulo de la pantalla
+        self.label_disc = tk.Label(self.root, text="Descuentos", font=('Lucida Console', 20), bg='#541388', fg='white')
+        self.label_disc.pack(pady=20)
+        
+        # Titulo que indica que la siguiente entrada de texto es para fijar el porcentaje de descuento en parado
+        self.label_prcnt_stp = tk.Label(self.root, text="Porcentaje de descuento parado", font=('Lucida Console', 16), bg='#541388', fg='white')
+        self.label_prcnt_stp.pack(pady=10)
+        
+        # Entrada de texto para porcentaje de descuento en parado
+        self.discount_stopped = tk.Entry(self.root, font=('Lucida Console', 16))
+        self.discount_stopped.pack(pady=10)
+        
+        # Titulo que indica que la siguiente entrada de texto es para fijar el porcentaje de descuento en movimiento
+        self.label_prcnt_mov = tk.Label(self.root, text="Porcentaje de descuento movimiento", font=('Lucida Console', 16), bg='#541388', fg='white')
+        self.label_prcnt_mov.pack(pady=10)
+
+        # Entrada de texto para porcentaje de descuento en movimiento
+        self.discount_moving = tk.Entry(self.root, font=('Lucida Console', 16))
+        self.discount_moving.pack(pady=10)
+        
+        # Boton para guardar cambios, incluye como command una función lambda para poder pasar en el método save_discounts el usuario como argumento.
+        self.submit = tk.Button(self.root, text="Guardar", command=lambda: self.save_discounts(self.user), **self.style_button)
+        self.submit.pack(pady=20)
+
+        # Logo
+        self.marco = tk.Frame(self.root, width=150, height=150, bg = '#541388')
+        self.marco.pack()
+        self.marco.place(anchor = 'center', relx = 0.5, rely = 0.85)
+
+        self.logo = tk.PhotoImage(file = 'Graficos/logo_cuadrado.png')
+
+        self.label= tk.Label(self.marco, image = self.logo, bg = '#541388')
+        self.label.pack()
     
+        logger.info('Pantalla de Descuento') # Control de Log
+    
+    def save_discounts(self, user):  #Método para guardar los descuentos para VTC
+        self.user = user.lower()
+        stopped_discount = self.discount_stopped.get()
+        moving_discount = self.discount_moving.get()
+
+        # Si los valores de los descuentos no son válidos o están vacios, se fijan en 0
+        stopped_discount = stopped_discount if stopped_discount else 0 
+        moving_discount = moving_discount if moving_discount else 0
+
+        '''
+        Este método llama a una función auxiliar Descuentos, explicada en el script de funciones_aux. Si recupera el valor True porque se han podido aplicar los descuentos se muestra un mensaje de éxito en pop-up y se inicia la aplicación en pygame.
+        '''
+        if Descuentos(self.user, stopped_discount, moving_discount):
+            messagebox.showinfo(title = "Exito", message = "Descuentos aplicados")
+            logger.info('Pantalla de Descuentos aplicados') # Control de Log
+            init_game(self.user)
+
+    def turno_screen(self, user): # Pantalla para definir turno y valor extra de la tarifa nocturna para taxistas
+        self.clear_screen()
+        self.user = user
+        
+        # Titulo de la pantalla
+        self.label_tarifa = tk.Label(self.root, text="Tarifas", font=('Lucida Console', 20), bg='#541388', fg='white')
+        self.label_tarifa.pack(pady=20)
+        
+        # Titulo que indica que el siguiente menu de opciones es para definir el turno
+        self.label_turno = tk.Label(self.root, text="Turno", font=('Lucida Console', 16), bg='#541388', fg='white')
+        self.label_turno.pack(pady=10)
+
+        # Lista de turnos para el menu
+        turnos_opt = ["Diurno", "Nocturno"]
+        self.turno = tk.StringVar()
+        self.turno.set("")
+
+        # Menu droprdown de turnos
+        self.dropdown_turno = tk.OptionMenu(self.root, self.turno, *turnos_opt)
+        self.dropdown_turno.config(font=('Lucida Console', 16), bg='#C8F50A', fg='#4100A8', width=20)
+        self.dropdown_turno.pack(pady=5)
+        
+        # Titulo que indica que la siguiente entrada de texto es para definir el porcentaje de aumento de tarifa (para turno nocturno)
+        self.label_prcnt = tk.Label(self.root, text="Porcentaje de aumento de tarifa (solo para noche)", font=('Lucida Console', 16), bg='#541388', fg='white')
+        self.label_prcnt.pack(pady=10)
+        
+        # Entrada de texto para tarifa
+        self.tarifa_extra = tk.Entry(self.root, font=('Lucida Console', 16))
+        self.tarifa_extra.pack(pady=10)
+        
+        # Boton para guardar cambios, como command toma una función lambda  que permite ejecutar el método save_discounts_t con el argumento de usuario
+        self.submit = tk.Button(self.root, text="Guardar", command=lambda: self.save_discounts_t(self.user), **self.style_button)
+        self.submit.pack(pady=20)
+
+        # Logo
+        self.marco = tk.Frame(self.root, width=150, height=150, bg = '#541388')
+        self.marco.pack()
+        self.marco.place(anchor = 'center', relx = 0.5, rely = 0.85)
+
+        self.logo = tk.PhotoImage(file = 'Graficos/logo_cuadrado.png')
+
+        self.label= tk.Label(self.marco, image = self.logo, bg = '#541388')
+        self.label.pack()
+
+        logger.info('Pantalla de turno') # Control de Log
+    
+    def save_discounts_t(self, user): # Método para guardar la tarifa para taxistas
+        self.user = user.lower()
+        turno = self.turno.get()
+        tarifa_extra = self.tarifa_extra.get()
+
+        # Si el valor de la tarifa no son válidos o están vacios, se fijan en 0
+        tarifa_extra = tarifa_extra if tarifa_extra else 0
+
+        if Descuentos_taxi(self.user, turno, tarifa_extra):
+            '''
+            Este método llama a una función auxiliar Descuentos_taxi, explicada en el script de funciones_aux. Si recupera el valor True porque se han podido aplicar los descuentos se muestra un mensaje de éxito en pop-up y se inicia la aplicación en pygame.
+            '''
+            messagebox.showinfo(title = "Exito", message = "Descuentos aplicados")
+            logger.info('Descuentos aplicados con exito') # Control de Log
+            init_game(self.user)
+
+    def res_pswd(self): # Pantalla para reiniciar la contraseña en clase de olvido
+        self.clear_screen()
+        
+        self.label_reset = tk.Label(self.root, text="Reiniciar contraseña", font=('Lucida Console', 20), bg='#541388', fg='white')
+        self.label_reset.pack(pady=20)
+
+        # Titulo que indica que la siguiente entrada de texto es para el nombre de usuario
+        self.label_user = tk.Label(self.root, text="Nombre de usuario", font=('Lucida Console', 16), bg='#541388', fg='white')
+        self.label_user.pack(pady = 5)
+
+        # Entrada de texto para el Usuario
+        self.user = tk.Entry(self.root, font=('Lucida Console', 16))
+        self.user.pack(pady=10)
+
+        # Botón para mostrar la pregunta secreta, será buscada con el método get_quest, spoiler, la muestra en un pop-up.
+        self.quest_get = tk.Button(self.root, text="Ver pregunta secreta", command=self.get_quest, **self.style_button)
+        self.quest_get.pack(pady=10)
+        
+        # Titulo que indica que la siguiente entrada de texto es para la respuesta secreta
+        self.label_answ = tk.Label(self.root, text="Escriba su respuesta secreta", font=('Lucida Console', 16), bg='#541388', fg='white')
+        self.label_answ.pack(pady=10)
+        
+        # Entrada de texto para la respuesta secreta
+        self.user_answer = tk.Entry(self.root, font=('Lucida Console', 16))
+        self.user_answer.pack(pady=10)
+        
+        # Titulo que indica que la siguiente entrada de texto es para la nueva contraseña
+        self.label_new_pswd = tk.Label(self.root, text="Nueva contraseña", font=('Lucida Console', 16), bg='#541388', fg='white')
+        self.label_new_pswd.pack(pady=10)
+        
+        # Entrada de texto para la nueva contraseña
+        self.new_pswd = tk.Entry(self.root, font=('Lucida Console', 16), show='*')
+        self.new_pswd.pack(pady=10)
+        
+        # Boton para confirmar los datos introducidos y cambiar la contraseña
+        self.submit_button = tk.Button(self.root, text="Enviar", command=self.change_pswd, **self.style_button)
+        self.submit_button.pack(pady=20)
+        
+        # Boton para volver a la pantalla de inicio de sesión
+        self.button_back = tk.Button(self.root, text="Atrás", command=self.login_screen, **self.style_button)
+        self.button_back.pack(pady=10)
+
+        logger.info('Pantalla de inicio de sesión mostrada') # Control de Log
+
+    def get_quest(self):
+        '''
+        Este método llama a una función auxiliar Pregunta, explicada en el script de funciones_aux. Únicamente devuelve la cadena almacenada de la pregunta secreta y la muestra al usuario mediante un pop-up.
+        '''
+        Pregunta(self.user.get())
+
+    def change_pswd(self):
+        '''
+        Este método llama a una función auxiliar Respuesta, explicada en el script de funciones_aux. Si se ha introducido la respuesta secreta de forma correcta permite cambiar la contrasela.
+        '''
+        Respuesta(self.user.get(), self.user_answer.get(), self.new_pswd.get())
+
     def login_empresa_screen(self): # Pantalla de Login para representante de Empresa. La estructura es similar a login_screen
         self.clear_screen()
 
@@ -161,6 +353,105 @@ class GUI:
         self.label= tk.Label(self.marco, image = self.logo, bg = '#541388')
         self.label.pack()
 
+    def check_password_empresa(self):
+        '''
+        Este método llama a una función auxiliar LogIn_Empresa, explicada en el script de funciones_aux. Esta función devolverá, si todo ha ido bien, el nombre de la empresa a la que pertenece el representante, llevando al usuario a la pantalla de empresa, donde podrá decidir cambiar la tarifa para los conductores de su empresa, o ver el dashboard con información relevante para su empresa. Si hay algún problema (contraseña o usuario equivocado, usuario inexistente, etc.) la función devuelve un False, de tal forma que en este punto se mostrara un error al usuario en forma de pop-up indicando que ha cometido algún error al escribir su usuario o contraseña.
+        El nombre de usuario y la contrseña se extraen de la pantalla previa a esta (login_empresa_screen) con el método .get.
+        '''
+        empresa = LogIn_Empresa(self.user.get(), self.password.get())
+        if not empresa:
+            messagebox.showinfo(title = "Error", message = "Nombre de usuario o contraseña equivocados")
+            logger.error(f'¡Intento fallido: Nombre de usuario o contraseña incorrecto!') # Control de log
+        else:
+            self.empresa = empresa
+            self.pantalla_empresa()
+            logger.info('!Verificación de acceso al sistema exitosa!')
+    
+    def pantalla_empresa(self): # Pantalla de opciones una vez se ha iniciado sesión como representante de empresa
+        self.clear_screen()
+
+        # Boton para acceder a la pantalla de cambio de tarifas
+        self.tarifa = tk.Button(self.root, text="Cambiar tarifa", command=self.pantalla_tarifa, **self.style_button)
+        self.tarifa.pack(pady=20)
+
+        # Boton para acceder al dashboard
+        self.dash = tk.Button(self.root, text="Acceder al dashboard", command=self.dashboard, **self.style_button)
+        self.dash.pack(pady=20)
+        logger.info('Pantalla de Empresa')
+
+        # Boton de atrás
+        self.button_back = tk.Button(self.root, text="Atrás", command=self.p_inicio, **self.style_button)
+        self.button_back.pack(pady=10)
+
+        # Logo
+        self.marco = tk.Frame(self.root, width=150, height=150, bg = '#541388')
+        self.marco.pack()
+        self.marco.place(anchor = 'center', relx = 0.5, rely = 0.85)
+
+        self.logo = tk.PhotoImage(file = 'Graficos/logo_cuadrado.png')
+
+        self.label= tk.Label(self.marco, image = self.logo, bg = '#541388')
+        self.label.pack()
+
+    def pantalla_tarifa(self): # Pantalla para cambiar tarifas de una empresa
+        self.clear_screen()
+
+        # Titulo que indica que la siguiente entrada de texto es para la tarifa en movimiento
+        self.tarifa_mov = tk.Label(self.root, text="Cambio tarifa movimiento (p.ej. 0.06€/s)", font=('Lucida Console', 16), bg='#541388', fg='white')
+        self.tarifa_mov.pack(pady= 20)
+
+        # Entrada de texto para la tarifa en movimiento
+        self.tarifa_mov_change = tk.Entry(self.root, font=('Lucida Console', 16))
+        self.tarifa_mov_change.pack(pady = 10)
+
+        # Titulo que indica que la siguiente entrada de texto es para la tarifa en parado
+        self.tarifa_stop = tk.Label(self.root, text="Cambio tarifa parado (p.ej. 0.03€/s)", font=('Lucida Console', 16), bg='#541388', fg='white')
+        self.tarifa_stop.pack(pady= 20)
+
+        # Entrada de texto para la tarifa en parado
+        self.tarifa_stop_change = tk.Entry(self.root, font=('Lucida Console', 16))
+        self.tarifa_stop_change.pack(pady = 10)
+
+        # Boton para confirmar cambios, llama a la función set_tarifas
+        self.submit_button = tk.Button(self.root, text="Enviar", command=self.set_tarifas, **self.style_button)
+        self.submit_button.pack(pady=20)
+        logger.info('Pantalla de cambio de tarifas mostrada')
+
+        # Boton para volver a la pantalla de empresa
+        self.button_back = tk.Button(self.root, text="Atrás", command=self.pantalla_empresa, **self.style_button)
+        self.button_back.pack(pady=10)
+
+        # Logo
+        self.marco = tk.Frame(self.root, width=150, height=150, bg = '#541388')
+        self.marco.pack()
+        self.marco.place(anchor = 'center', relx = 0.5, rely = 0.85)
+
+        self.logo = tk.PhotoImage(file = 'Graficos/logo_cuadrado.png')
+
+        self.label= tk.Label(self.marco, image = self.logo, bg = '#541388')
+        self.label.pack()
+
+    def set_tarifas(self): # Método para definir las tarifas de empresa
+        tarifa_stopped = self.tarifa_stop_change.get()
+        tarifa_mov = self.tarifa_mov_change.get()
+        
+        # Si no se recupera un valor con .get, se establece en sus valores estándar 0.05 y 0.02. Si hay un valor, se establece ese valor.
+        tarifa_stopped = tarifa_stopped if tarifa_stopped else 0.02 
+        tarifa_mov = tarifa_mov if tarifa_mov else 0.05
+        logger.info(f'Tarifa en parado fijada en {tarifa_stopped}')
+        logger.info(f'Tarifa en movimiento fijada en {tarifa_mov}')
+
+        '''
+        Este método llama a una función auxiliar Tarifa, explicada en el script de funciones_aux. Si recupera el valor True porque se han podido aplicar las tarifas se muestra un mensaje de éxito en pop-up y se vuelve a la pantalla de inicio.
+        '''
+        if Tarifa(self.empresa, tarifa_mov, tarifa_stopped):
+            messagebox.showinfo(title = "Exito", message = "Tarifas aplicadas")
+            logger.info('Pantalla de tarifas aplicados') # Control de Log
+            self.p_inicio()
+
+    def dashboard(self): # Metodo intermedio para instanciar la clase importada Dashboard del script 'dashboard.py' e iniciar el servidor que mostrará el dashboard.
+        dashboard = Dashboard()
+        dashboard.init_server()
 
     def reg_screen(self): # Pantalla de registro de usuario
         self.clear_screen()
@@ -211,7 +502,6 @@ class GUI:
         self.dropdown_cond.config(font=('Lucida Console', 16), bg='#C8F50A', fg='#4100A8', width=20)
         self.dropdown_cond.pack(pady=5)
         
-
         # Titulo que indica que el siguiente menu desplegable es para seleccionar la empresa
         self.label_dropdown_emp = tk.Label(self.root, text="Seleccione empresa:", font=('Lucida Console', 16), bg='#541388', fg='white')
         self.label_dropdown_emp.pack(pady=5)
@@ -239,6 +529,14 @@ class GUI:
         button_frame.pack(pady=20)
 
         logger.info('Pantalla de Registro de Usuarios') # Control de Log
+
+    def register(self):
+        '''
+        Este método llama a una función auxiliar Register, explicada en el script de funciones_aux. Esta función devolverá, si todo ha ido bien un valor True, en cuyo caso permite al usuario ir a la pantalla de Login de usuarios para poder emepzar a usar la aplicación.
+        Las variables se extraen de la pantalla previa (reg_screen) con el método .get.
+        '''
+        if Register(self.user.get(), self.password.get(), self.quest.get(), self.answ.get(), self.selected_conductor.get(), self.empresa_sel.get()) == True:
+            self.login_screen()
 
     def pantalla_ayuda(self): # Pantala de ayuda
         self.clear_screen()
@@ -283,312 +581,6 @@ Se pueden incluir otros casos de uso modificando el archivo 'Empresa.csv'.
 
         self.button_back = tk.Button(self.root, text="Atrás", command=self.p_inicio, **self.style_button)
         self.button_back.pack(pady=10)
-
-    def pantalla_empresa(self): # Pantalla de opciones una vez se ha iniciado sesión como representante de empresa
-        self.clear_screen()
-
-        # Boton para acceder a la pantalla de cambio de tarifas
-        self.tarifa = tk.Button(self.root, text="Cambiar tarifa", command=self.pantalla_tarifa, **self.style_button)
-        self.tarifa.pack(pady=20)
-
-        # Boton para acceder al dashboard
-        self.dash = tk.Button(self.root, text="Acceder al dashboard", command=self.dashboard, **self.style_button)
-        self.dash.pack(pady=20)
-        logger.info('Pantalla de Empresa')
-
-        # Boton de atrás
-        self.button_back = tk.Button(self.root, text="Atrás", command=self.p_inicio, **self.style_button)
-        self.button_back.pack(pady=10)
-
-        # Logo
-        self.marco = tk.Frame(self.root, width=150, height=150, bg = '#541388')
-        self.marco.pack()
-        self.marco.place(anchor = 'center', relx = 0.5, rely = 0.85)
-
-        self.logo = tk.PhotoImage(file = 'Graficos/logo_cuadrado.png')
-
-        self.label= tk.Label(self.marco, image = self.logo, bg = '#541388')
-        self.label.pack()
-
-
-    def pantalla_tarifa(self): # Pantalla para cambiar tarifas de una empresa
-        self.clear_screen()
-
-        # Titulo que indica que la siguiente entrada de texto es para la tarifa en movimiento
-        self.tarifa_mov = tk.Label(self.root, text="Cambio tarifa movimiento (p.ej. 0.06€/s)", font=('Lucida Console', 16), bg='#541388', fg='white')
-        self.tarifa_mov.pack(pady= 20)
-
-        # Entrada de texto para la tarifa en movimiento
-        self.tarifa_mov_change = tk.Entry(self.root, font=('Lucida Console', 16))
-        self.tarifa_mov_change.pack(pady = 10)
-
-        # Titulo que indica que la siguiente entrada de texto es para la tarifa en parado
-        self.tarifa_stop = tk.Label(self.root, text="Cambio tarifa parado (p.ej. 0.03€/s)", font=('Lucida Console', 16), bg='#541388', fg='white')
-        self.tarifa_stop.pack(pady= 20)
-
-        # Entrada de texto para la tarifa en parado
-        self.tarifa_stop_change = tk.Entry(self.root, font=('Lucida Console', 16))
-        self.tarifa_stop_change.pack(pady = 10)
-
-        # Boton para confirmar cambios, llama a la función set_tarifas
-        self.submit_button = tk.Button(self.root, text="Enviar", command=self.set_tarifas, **self.style_button)
-        self.submit_button.pack(pady=20)
-        logger.info('Pantalla de cambio de tarifas mostrada')
-
-        # Boton para volver a la pantalla de empresa
-        self.button_back = tk.Button(self.root, text="Atrás", command=self.pantalla_empresa, **self.style_button)
-        self.button_back.pack(pady=10)
-
-        # Logo
-        self.marco = tk.Frame(self.root, width=150, height=150, bg = '#541388')
-        self.marco.pack()
-        self.marco.place(anchor = 'center', relx = 0.5, rely = 0.85)
-
-        self.logo = tk.PhotoImage(file = 'Graficos/logo_cuadrado.png')
-
-        self.label= tk.Label(self.marco, image = self.logo, bg = '#541388')
-        self.label.pack()
-
-    def dashboard(self): # Metodo intermedio para instanciar la clase importada Dashboard del script 'dashboard.py' e iniciar el servidor que mostrará el dashboard.
-        dashboard = Dashboard()
-        dashboard.init_server()
-
-    def res_pswd(self): # Pantalla para reiniciar la contraseña en clase de olvido
-        self.clear_screen()
-        
-        self.label_reset = tk.Label(self.root, text="Reiniciar contraseña", font=('Lucida Console', 20), bg='#541388', fg='white')
-        self.label_reset.pack(pady=20)
-
-        # Titulo que indica que la siguiente entrada de texto es para el nombre de usuario
-        self.label_user = tk.Label(self.root, text="Nombre de usuario", font=('Lucida Console', 16), bg='#541388', fg='white')
-        self.label_user.pack(pady = 5)
-
-        # Entrada de texto para el Usuario
-        self.user = tk.Entry(self.root, font=('Lucida Console', 16))
-        self.user.pack(pady=10)
-
-        # Botón para mostrar la pregunta secreta, será buscada con el método get_quest, spoiler, la muestra en un pop-up.
-        self.quest_get = tk.Button(self.root, text="Ver pregunta secreta", command=self.get_quest, **self.style_button)
-        self.quest_get.pack(pady=10)
-        
-        # Titulo que indica que la siguiente entrada de texto es para la respuesta secreta
-        self.label_answ = tk.Label(self.root, text="Escriba su respuesta secreta", font=('Lucida Console', 16), bg='#541388', fg='white')
-        self.label_answ.pack(pady=10)
-        
-        # Entrada de texto para la respuesta secreta
-        self.user_answer = tk.Entry(self.root, font=('Lucida Console', 16))
-        self.user_answer.pack(pady=10)
-        
-        # Titulo que indica que la siguiente entrada de texto es para la nueva contraseña
-        self.label_new_pswd = tk.Label(self.root, text="Nueva contraseña", font=('Lucida Console', 16), bg='#541388', fg='white')
-        self.label_new_pswd.pack(pady=10)
-        
-        # Entrada de texto para la nueva contraseña
-        self.new_pswd = tk.Entry(self.root, font=('Lucida Console', 16), show='*')
-        self.new_pswd.pack(pady=10)
-        
-        # Boton para confirmar los datos introducidos y cambiar la contraseña
-        self.submit_button = tk.Button(self.root, text="Enviar", command=self.change_pswd, **self.style_button)
-        self.submit_button.pack(pady=20)
-        
-        # Boton para volver a la pantalla de inicio de sesión
-        self.button_back = tk.Button(self.root, text="Atrás", command=self.login_screen, **self.style_button)
-        self.button_back.pack(pady=10)
-
-        logger.info('Pantalla de inicio de sesión mostrada') # Control de Log
-
-    def check_password(self):
-        '''
-        Este método llama a una función auxiliar LogIn, explicada en el script de funciones_aux. Esta función devolverá, si todo ha ido bien, si la licencia del usuario es VTC o Taxista, en cuyo caso llevará a la pantalla correspondiente para definir los datos que faltan antes de lanzar el programa, se pasa como argumento el nombre del usuario. Si hay algún problema (contraseña o usuario equivocado, usuario inexistente, etc.) la función devuelve un False, de tal forma que en este punto se mostrara un error al usuario en forma de pop-up indicando que ha cometido algún error al escribir su usuario o contraseña.
-        El nombre de usuario y la contrseña se extraen de la pantalla previa a esta (login_screen) con el método .get.
-        '''
-        tarifa = LogIn(self.user.get(), self.password.get())
-        user = self.user.get()
-        if not Tarifa:
-            messagebox.showinfo(title = "Error", message = "Nombre de usuario o contraseña equivocados")
-            logger.error(f'¡Intento fallido: Nombre de usuario o contraseña incorrecto!') # Control de log
-        else:
-            if tarifa == 'VTC':
-                self.discount_screen(user)
-            elif tarifa == 'Taxista':
-                self.turno_screen(user)
-
-        logger.info('!Verificación de acceso al sistema exitosa!') # Control de Log
-    
-    def check_password_empresa(self):
-        '''
-        Este método llama a una función auxiliar LogIn_Empresa, explicada en el script de funciones_aux. Esta función devolverá, si todo ha ido bien, el nombre de la empresa a la que pertenece el representante, llevando al usuario a la pantalla de empresa, donde podrá decidir cambiar la tarifa para los conductores de su empresa, o ver el dashboard con información relevante para su empresa. Si hay algún problema (contraseña o usuario equivocado, usuario inexistente, etc.) la función devuelve un False, de tal forma que en este punto se mostrara un error al usuario en forma de pop-up indicando que ha cometido algún error al escribir su usuario o contraseña.
-        El nombre de usuario y la contrseña se extraen de la pantalla previa a esta (login_empresa_screen) con el método .get.
-        '''
-        empresa = LogIn_Empresa(self.user.get(), self.password.get())
-        if not empresa:
-            messagebox.showinfo(title = "Error", message = "Nombre de usuario o contraseña equivocados")
-            logger.error(f'¡Intento fallido: Nombre de usuario o contraseña incorrecto!') # Control de log
-        else:
-            self.empresa = empresa
-            self.pantalla_empresa()
-            logger.info('!Verificación de acceso al sistema exitosa!')
-
-    
-    def register(self):
-        '''
-        Este método llama a una función auxiliar Register, explicada en el script de funciones_aux. Esta función devolverá, si todo ha ido bien un valor True, en cuyo caso permite al usuario ir a la pantalla de Login de usuarios para poder emepzar a usar la aplicación.
-        Las variables se extraen de la pantalla previa (reg_screen) con el método .get.
-        '''
-        if Register(self.user.get(), self.password.get(), self.quest.get(), self.answ.get(), self.selected_conductor.get(), self.empresa_sel.get()) == True:
-            self.login_screen()
-
-    def get_quest(self):
-        '''
-        Este método llama a una función auxiliar Pregunta, explicada en el script de funciones_aux. Únicamente devuelve la cadena almacenada de la pregunta secreta y la muestra al usuario mediante un pop-up.
-        '''
-        Pregunta(self.user.get())
-    
-    def change_pswd(self):
-        '''
-        Este método llama a una función auxiliar Respuesta, explicada en el script de funciones_aux. Si se ha introducido la respuesta secreta de forma correcta permite cambiar la contrasela.
-        '''
-        Respuesta(self.user.get(), self.user_answer.get(), self.new_pswd.get())
-
-    def turno_screen(self, user): # Pantalla para definir turno y valor extra de la tarifa nocturna para taxistas
-        self.clear_screen()
-        self.user = user
-        
-        # Titulo de la pantalla
-        self.label_tarifa = tk.Label(self.root, text="Tarifas", font=('Lucida Console', 20), bg='#541388', fg='white')
-        self.label_tarifa.pack(pady=20)
-        
-        # Titulo que indica que el siguiente menu de opciones es para definir el turno
-        self.label_turno = tk.Label(self.root, text="Turno", font=('Lucida Console', 16), bg='#541388', fg='white')
-        self.label_turno.pack(pady=10)
-
-        # Lista de turnos para el menu
-        turnos_opt = ["Diurno", "Nocturno"]
-        self.turno = tk.StringVar()
-        self.turno.set("")
-
-        # Menu droprdown de turnos
-        self.dropdown_turno = tk.OptionMenu(self.root, self.turno, *turnos_opt)
-        self.dropdown_turno.config(font=('Lucida Console', 16), bg='#C8F50A', fg='#4100A8', width=20)
-        self.dropdown_turno.pack(pady=5)
-        
-        # Titulo que indica que la siguiente entrada de texto es para definir el porcentaje de aumento de tarifa (para turno nocturno)
-        self.label_prcnt = tk.Label(self.root, text="Porcentaje de aumento de tarifa (solo para noche)", font=('Lucida Console', 16), bg='#541388', fg='white')
-        self.label_prcnt.pack(pady=10)
-        
-        # Entrada de texto para tarifa
-        self.tarifa_extra = tk.Entry(self.root, font=('Lucida Console', 16))
-        self.tarifa_extra.pack(pady=10)
-        
-        # Boton para guardar cambios, como command toma una función lambda  que permite ejecutar el método save_discounts_t con el argumento de usuario
-        self.submit = tk.Button(self.root, text="Guardar", command=lambda: self.save_discounts_t(self.user), **self.style_button)
-        self.submit.pack(pady=20)
-
-        # Logo
-        self.marco = tk.Frame(self.root, width=150, height=150, bg = '#541388')
-        self.marco.pack()
-        self.marco.place(anchor = 'center', relx = 0.5, rely = 0.85)
-
-        self.logo = tk.PhotoImage(file = 'Graficos/logo_cuadrado.png')
-
-        self.label= tk.Label(self.marco, image = self.logo, bg = '#541388')
-        self.label.pack()
-
-        logger.info('Pantalla de turno') # Control de Log
-
-    def set_tarifas(self): # Método para definir las tarifas de empresa
-        tarifa_stopped = self.tarifa_stop_change.get()
-        tarifa_mov = self.tarifa_mov_change.get()
-        
-        # Si no se recupera un valor con .get, se establece en sus valores estándar 0.05 y 0.02. Si hay un valor, se establece ese valor.
-        tarifa_stopped = tarifa_stopped if tarifa_stopped else 0.02 
-        tarifa_mov = tarifa_mov if tarifa_mov else 0.05
-        logger.info(f'Tarifa en parado fijada en {tarifa_stopped}')
-        logger.info(f'Tarifa en movimiento fijada en {tarifa_mov}')
-
-        '''
-        Este método llama a una función auxiliar Tarifa, explicada en el script de funciones_aux. Si recupera el valor True porque se han podido aplicar las tarifas se muestra un mensaje de éxito en pop-up y se vuelve a la pantalla de inicio.
-        '''
-        if Tarifa(self.empresa, tarifa_mov, tarifa_stopped):
-            messagebox.showinfo(title = "Exito", message = "Tarifas aplicadas")
-            logger.info('Pantalla de tarifas aplicados') # Control de Log
-            self.p_inicio()
-
-
-
-    def discount_screen(self, user): # Pantalla para aplicar descuentos en conductores de VTC
-        self.clear_screen()
-        self.user = user
-        # Titulo de la pantalla
-        self.label_disc = tk.Label(self.root, text="Descuentos", font=('Lucida Console', 20), bg='#541388', fg='white')
-        self.label_disc.pack(pady=20)
-        
-        # Titulo que indica que la siguiente entrada de texto es para fijar el porcentaje de descuento en parado
-        self.label_prcnt_stp = tk.Label(self.root, text="Porcentaje de descuento parado", font=('Lucida Console', 16), bg='#541388', fg='white')
-        self.label_prcnt_stp.pack(pady=10)
-        
-        # Entrada de texto para porcentaje de descuento en parado
-        self.discount_stopped = tk.Entry(self.root, font=('Lucida Console', 16))
-        self.discount_stopped.pack(pady=10)
-        
-        # Titulo que indica que la siguiente entrada de texto es para fijar el porcentaje de descuento en movimiento
-        self.label_prcnt_mov = tk.Label(self.root, text="Porcentaje de descuento movimiento", font=('Lucida Console', 16), bg='#541388', fg='white')
-        self.label_prcnt_mov.pack(pady=10)
-
-        # Entrada de texto para porcentaje de descuento en movimiento
-        self.discount_moving = tk.Entry(self.root, font=('Lucida Console', 16))
-        self.discount_moving.pack(pady=10)
-        
-        # Boton para guardar cambios, incluye como command una función lambda para poder pasar en el método save_discounts el usuario como argumento.
-        self.submit = tk.Button(self.root, text="Guardar", command=lambda: self.save_discounts(self.user), **self.style_button)
-        self.submit.pack(pady=20)
-
-        # Logo
-        self.marco = tk.Frame(self.root, width=150, height=150, bg = '#541388')
-        self.marco.pack()
-        self.marco.place(anchor = 'center', relx = 0.5, rely = 0.85)
-
-        self.logo = tk.PhotoImage(file = 'Graficos/logo_cuadrado.png')
-
-        self.label= tk.Label(self.marco, image = self.logo, bg = '#541388')
-        self.label.pack()
-    
-        logger.info('Pantalla de Descuento') # Control de Log
-
-    def save_discounts(self, user):  #Método para guardar los descuentos para VTC
-        self.user = user.lower()
-        stopped_discount = self.discount_stopped.get()
-        moving_discount = self.discount_moving.get()
-
-        # Si los valores de los descuentos no son válidos o están vacios, se fijan en 0
-        stopped_discount = stopped_discount if stopped_discount else 0 
-        moving_discount = moving_discount if moving_discount else 0
-
-        '''
-        Este método llama a una función auxiliar Descuentos, explicada en el script de funciones_aux. Si recupera el valor True porque se han podido aplicar los descuentos se muestra un mensaje de éxito en pop-up y se inicia la aplicación en pygame.
-        '''
-        if Descuentos(self.user, stopped_discount, moving_discount):
-            messagebox.showinfo(title = "Exito", message = "Descuentos aplicados")
-            logger.info('Pantalla de Descuentos aplicados') # Control de Log
-            init_game(self.user)
-       
-    
-    def save_discounts_t(self, user): # Método para guardar la tarifa para taxistas
-        self.user = user.lower()
-        turno = self.turno.get()
-        tarifa_extra = self.tarifa_extra.get()
-
-        # Si el valor de la tarifa no son válidos o están vacios, se fijan en 0
-        tarifa_extra = tarifa_extra if tarifa_extra else 0
-
-        if Descuentos_taxi(self.user, turno, tarifa_extra):
-            '''
-            Este método llama a una función auxiliar Descuentos_taxi, explicada en el script de funciones_aux. Si recupera el valor True porque se han podido aplicar los descuentos se muestra un mensaje de éxito en pop-up y se inicia la aplicación en pygame.
-            '''
-            messagebox.showinfo(title = "Exito", message = "Descuentos aplicados")
-            logger.info('Descuentos aplicados con exito') # Control de Log
-            init_game(self.user)
-
 
 # Inicio del script
 if __name__ == "__main__":

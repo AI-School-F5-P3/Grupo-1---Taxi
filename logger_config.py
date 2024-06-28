@@ -12,7 +12,7 @@ def setup_logger():
     Posteriormente se especifica el formato en el que queremos que se generen los logs, en este caso 'asctime' define el formato de fecha (con fecha actual y hora, levelname define el nivel de gravedad del mensaje, y message muestra el mensaje que se ha especificado que se quiere loggear cuando se da la condición x.)
     Finalmente se añaden los gestores al 'logger' y el return devuelve el logger para utilizarlo en el cuerpo principal de la apliación.
     '''
-    
+
     for dirpath, dirnames, filenames in os.walk("."):
         for filename in [f for f in filenames if f.endswith("funciones_aux.py")]:
             os.chdir(dirpath)
@@ -20,10 +20,6 @@ def setup_logger():
     logger = logging.getLogger('taxi_app_logger')
     logger.setLevel(logging.DEBUG)
    
-    # Crear un manejador de archivo
-    fh = logging.FileHandler('taxi_app.log')
-    fh.setLevel(logging.DEBUG)
-
     # Crear un manejador de archivo con encoding UTF-8
     fh = logging.FileHandler('taxi_app.log', encoding='utf-8')
     fh.setLevel(logging.DEBUG)

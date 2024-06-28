@@ -31,7 +31,7 @@ df_junio = df.loc[df["Mes"] == 6]
 
 # Cálculos previos
 num_carreras_dia = df_junio.loc[df_junio['Dia'] == 26].shape[0]
-num_carreras_mes = df.loc[df['Mes'] == 6].shape[0]
+num_carreras_mes = df_junio.shape[0]
 dinero_total_dia = df_junio.loc[df_junio['Dia'] == 26, 'Precio'].sum()
 dinero_total_mes = df_junio['Precio'].sum()
 dinero_medio_dia = df_junio.loc[df_junio['Dia'] == 26, 'Precio'].mean()

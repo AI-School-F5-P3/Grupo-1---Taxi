@@ -6,38 +6,61 @@ from logger_config import logger
 from dashboard import Dashboard
 
 class GUI:
+    '''
+    Clase que inicia la interfaz gráfica, en el constructor __init__ se va a especificar aquellas variables que vamos a querer que sean estables cuando se ejecuten los diferentes métodos de la clase.
+    '''
     def __init__(self):
-        self.root = tk.Tk()
-        self.root.title("Taxea")
-        self.root.geometry('800x600')
-        self.root.configure(bg='#541388')
+        self.root = tk.Tk() # Inicia la pantalla de tkinter
+        self.root.title("Taxea") # Fija el nombre que aparece en la ventana 
+        self.root.geometry('800x600') # Fija el tamaño por defecto de la pantalla al abrir la aplicación. En píxeles.
+        self.root.configure(bg='#541388') # Establece el color del fondo para toda la ejecución de tkinter (hexadecimal, es morado)
 
-        self.empresa = None
+        self.empresa = None # Se fija la variable de empresa que la vamos a necesitar en metodos posteriores
 
         self.style_button = {'font': ('Lucida Console', 16), 'bg': '#C8F50A', 'fg': '#541388', 'padx': 20, 'pady': 10, 'bd': 0}
+        # Se define el estilo que van a tener todos los botones que van a utilizarse en la interfaz gráfica.
 
-        self.p_inicio() 
+        self.p_inicio() # Se ejecuta la pantalla de inicio con un metodo definido más adelante.
 
-        logger.info('Aplicación iniciada') # Control de Log
+        logger.info('Aplicación iniciada') # Mensaje que queremos que capture el logger al iniciar
 
-        self.root.mainloop()
+        self.root.mainloop() # mainloop define el bucle de funcionamiento de la interfaz, para que no se cierre la aplicación
 
-    def p_inicio(self):
+    def p_inicio(self): # Pantalla de inicio
+        '''
+        La pantalla de inicio, y en general el resto de métodos de pantalla van a tener una estructura general similar.
+        En primer lugar la función clear_screen elimina de la pantalla todos los widgets que se hayan generado previamente, de esta forma podemos simular la sensación de que la interfaz tiene varias pantallas sobre las que vamos cambiando. 
+        A nivel de funcionamiento lo que estamos haciendo es eliminar todos los widgets previos y generar los nuevos que queremos para la siguiente pantalla.
+
+        Los widgets disponibles, entre otros son:
+        -tk.Button = Boton interactuable, incluye como texto la cadena en (text), el comando que debe ejecutar (command) y el estilo de los botones (los asteriscos indican que se definió en __init__)
+        -tk.Frame = Marco, se utiliza para colocar imagenes en la pantalla, se especifica tamaño y color de fondo (bg)
+        -tk.PhotoImage = Se incluye el archivo fotográfico que queremos incluir
+        -tk.Label = Sirve para incluir objetos (texto como titulos, o por ejemplo la fotografia creado en photoimage) con el color de fondo que queramos.
+        -tk.Entry = Genera una pequeña entrada de texto, de una linea de altura, en la que el usuario puede incluir la respuesta que se requiera, y que puede extraerse posteriormente.
+        -tk.messagebox.showinfo = Muestra un mensaje externo que aparece como un pop-up en la aplicación.
+        Para colocar todos estos widgets se utiliza pack, que coloca el widget a continuación del previo, utiliza padx y pady como argumentos para colocar distanca en el eje "x" y en el eje "y".
+        '''
 
         self.clear_screen()
 
+        # Boton para pasar a la pantalla de inicio de sesion usuaria
         self.inicio = tk.Button(self.root, text="Inicio Sesión Conductor", command=self.login_screen, **self.style_button)
         self.inicio.pack(pady=30)
 
+        # Boton para pasar a la pantalla de inicio de sesion de empresa
         self.inicio_empresa = tk.Button(self.root, text="Inicio Sesión Empresa", command=self.login_empresa_screen, **self.style_button)
         self.inicio_empresa.pack(pady=30)
-        
+
+        # Boton para registar usuarios
         self.reg = tk.Button(self.root, text="Registrarse", command=self.reg_screen, **self.style_button)
         self.reg.pack(pady=30)
 
-        self.reg = tk.Button(self.root, text="Ayuda", command=self.pantalla_ayuda, **self.style_button)
-        self.reg.pack(pady=30)
+        # Boton para mostrar la ayuda
+        self.ayuda = tk.Button(self.root, text="Ayuda", command=self.pantalla_ayuda, **self.style_button)
+        self.ayuda.pack(pady=30)
 
+        # Boton para generar el logo
         self.marco = tk.Frame(self.root, width=150, height=150, bg = '#541388')
         self.marco.pack()
         self.marco.place(anchor = 'center', relx = 0.5, rely = 0.85)
@@ -48,23 +71,24 @@ class GUI:
         self.label.pack()
 
 
-    def clear_screen(self):
+    def clear_screen(self): # Funcion para eliminar los widgets
         for widget in self.root.winfo_children():
             widget.destroy()
 
-    def login_screen(self):
+    def login_screen(self): # Pantalla de inicio de sesion de usuarios
         self.clear_screen()
         
+        # Titulo que indica que la pantalla es de inicio de sesión
         self.label_inicio = tk.Label(self.root, text="Inicie Sesión", font=('Lucida Console', 20), bg='#541388', fg='white')
         self.label_inicio.pack(pady=20)
         
-         # Título y Entry para el usuario
+         # Titulo que indica que la siguiente entrada de texto es para el nombre de Usuario
         self.label_user = tk.Label(self.root, text="Usuario:", font=('Lucida Console', 16), bg='#541388', fg='white')
         self.label_user.pack(pady=5)
         self.user = tk.Entry(self.root, font=('Lucida Console', 16))
         self.user.pack(pady=5)
         
-        # Título y Entry para la contraseña
+        # Título que indica que 
         self.label_password = tk.Label(self.root, text="Contraseña:", font=('Lucida Console', 16), bg='#541388', fg='white')
         self.label_password.pack(pady=5)
         self.password = tk.Entry(self.root, font=('Lucida Console', 16), show='*')

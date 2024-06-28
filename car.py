@@ -8,6 +8,20 @@ import numpy as np
 from logger_config import logger
 
 class Game:
+    '''
+    Se define la clase game, en el constructor __init__ se van a incluir las variables con las que vamos a trabajar a lo largo de la ejecución en los diferentes métodos.
+    Se especifican los fps en 60 para que el movimiento del coche sea fluido cuando se ejecute.
+    El tamaño de la pantalla se establece en 1600 de ancho y 900 de alto, que debería permitir adapatarse bien a la mayoría de pantallas de ordenador actuales.
+    pygame.init() inicia la ejecución del módulo de pygame, y se genera la pantalla de la aplicación (pygame.display.set_mode) con las especificaciones previas.
+    Se añade además una caption (display.set_caption) para que la ventana de la aplicación presente el nombre de nuestra aplicación 'taxea' y como icono nuestro logo (display.set_icon).
+    Se guarda en una variable el reloj de pygame y en otra el gestor de eventos de pygame para la pantalla.
+    Se guardan además el nombre de usuario que ha iniciado sesión y se genera una variable vacía empresa que luego usaremos.
+    Especificaremos además los diferentes estados del juego con una función definida más adelante en el código llamada gameStateManager, que nos permitira ejecutar diferentes métodos de la clase game, correspondientes a las diferentes pantallas de juego.
+    Start indica la pantalla de inicio
+    Intro indica la pantalla de introducción al funcionamiento del juego
+    Taximetro indica la pantalla del propio taximetro, donde mostraremos el movimiento del coche, los precios y gestionaremos los estados de movimiento y parada.
+    Quit será el metodo que gestione el cierre de la aplicación para que se haga correctamente y sin errores.
+    '''
     def __init__(self, user):
         self.FPS = 60
         self.S_Width = 1600
@@ -40,6 +54,11 @@ class Game:
         self.gameStateManager.set_states(self.states)
 
     def run(self):
+        '''
+        El método run será el método de ejecución para todas las clases, en este caso es además el que controla el bucle principal de juego, de tal forma que el juego correrá (while True es siempre) hasta que llegue a un evento de cierre, en nuestro caso el estado Quit. 
+        Dentro de este bucle hemos inlcuido un gestor de eventos, que es un método se incluye en todas las clases de la aplicación, el cual define y gestiona los eventos de juego como pulsar botones, hacer click del ratón etc. Necesarios para poder modificar los estados de juego y asegurar su correcto funcionamiento.
+        Por último, el bucle incluye un display.update() que actualiza la pantalla con cada ejecución, con clock tick y fps definimos que serán 60 actualizaciones por segundo, para hacer una ejecución fluida visualmente.
+        '''
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -54,11 +73,17 @@ class Game:
             self.clock.tick(self.FPS)
 
 class Start:
+    ''' 
+    La clase Start recibe la información de la pantalla, que será siempre la que hemos definido en la clase game y el gameStateManager, que permite definir el estado en el que se encuentra la aplicación.
+    '''
     def __init__(self, display, gameStateManager):
         self.display = display
         self.gameStateManager = gameStateManager
 
     def handle_events(self, event):
+        ''' 
+        Los eventos que debe capturar esta clase se refieren a los botones de 'empezar carrera' y 'quit' que se definirán en el método run. En este caso la función busca que se pulse un botón del raton, y que cuando se pulsa si su posición (obtenida con mouse.get_pos, donde a y b son eje x y eje y) esta dentro del rectangulo que define alguno de los dos botones, el estado del gameStateManager cambie del actual 'Start' al que corresponde 'Intro' o 'Quit'.
+        '''
         if event.type == pygame.MOUSEBUTTONDOWN:
             a, b = pygame.mouse.get_pos()
             if self.quit_button_rect.collidepoint((a, b)):
@@ -69,6 +94,17 @@ class Start:
                 logger.info('El taxista/vtc ha empezado el viaje')
 
     def run(self):
+        '''
+        El método de ejecución genera todos los elementos de la pantalla de inicio.
+        Image.load se utiliza para cargar las imágenes que queremos introducir en pantalla
+        Con font.SysFont definimos la fuente del sistema (están instaladas por defecto en nuestro sistema operativo) y el tamaño que queremos usar.
+        Se definen unas variables que guardarán los colores que vamos a utilzar en el método. En este caso tenemos que definirlo por el método RGBA.
+        Después se definen los botones, que no serán otra cosa que unos rectangulos en los que debemos especificar su posición de inicio (x e y) y su tamaño (ancho y alto)
+        Se define también el texto que queremos que se situe dentro de estos rectángulos para generar la sensación de un botón interactuable.
+        Display.blit permite posicionar en pantalla cada uno de los elementos que estamos generando, es importante seguir un orden correcto ya que cada llamada a esta función coloca la imagen encima de lo que había antes.
+        Para dar aún mas sensación de interactuabilidad y generar una mejor experiencia de usuario, especificamos un condicional para que, si la posición del raton (a y b) entran en la posición en la que se encuentra cada rectángulo se modifique el color a un gradiente más suave, de esta forma generamos la ilusión de poder clickarlo.
+        Por último se coloca el texto dentro del rectángulo usando display.blit, para que se sitúe correctamente, como argumento de posición le pasamos la posición del rectangulo en ambos ejes + 5 pixeles, para que así hay algo de margen con el límite del rectángulo.
+        '''
         # Variables generales
         a, b = pygame.mouse.get_pos()
         login_screen = pygame.image.load('Graficos/start_p.jpeg')
@@ -105,6 +141,9 @@ class Intro:
         self.gameStateManager = gameStateManager
 
     def handle_events(self, event):
+        '''
+        En este caso los eventos que queremos capturar es que se si se pulsa el botón (KEYDOWN) del teclado correspondiente a enter/return (K_RETURN) se cambia el estado de la aplicación a taximetro y empieza a contarse el tiempo de ejecución del taximetro.
+        '''
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_RETURN:
                 self.gameStateManager.set_state('taximetro')
@@ -118,6 +157,17 @@ class Intro:
         self.display.blit(texto, (175, 100))
 
 class Taximetro:
+    '''
+    Taximetro es la clase que va a gestionar la mayor parte de nuestro programa. Incluye el movimiento del coche, el cálculo de tiempo y dinero y la creación y actualización de una base de datos que incluya las carreras que se vayan generando.
+    Además de las variables que conocemos de las otras clases se incluyen clases importantes como:
+    La imagen del coche que vamos a utilizar, cargada con image.load
+    La posición en la pantalla en la que se situa el coche inicialmente
+    Un flag que indica que el movimiento del coche al empezar es False (empiza parado)
+    Definición de la fuente a utilizar.
+    Una llamada al tiempo de inicio, se incluye para que se pueda modificar como hemos visto en la clase anterior.
+    Se almacena el csv con los usuarios
+    Y se llama a una función que actualiza las tarifas si se han modificado en el csv de usuarios.
+    '''
     def __init__(self, display, gameStateManager, user):
         self.user = user
         self.display = display
@@ -132,6 +182,12 @@ class Taximetro:
         self.update_tarifas()
 
     def update_tarifas(self):
+        '''
+        Esta función se encarga de comprobar el precio de la tarifa que el usuario tiene asociado y la licencia de este.
+        Si la tarifa no se encuentra en la base de datos (porque todavía no se haya añadido ninguna por ejemplo) se asigna a los valores por defecto de 0.05 y 0.02
+        Si la licencia es de taxista, en el caso de que esté en turno nocturno, se añadirá a la tarifa base el valor de la tarifa base multiplicada por el valor del descuento y divido por 100. 
+        Para la licencia de vtc se hace el mismo proceso pero en este caso se resta el valor del cálculo dado que se trata de un descuento y no de una tarifa extra por nocturnidad.
+        '''
         user_info = self.datos_usuarios[self.datos_usuarios["Usuarios"] == self.user].iloc[0]
         licencia = user_info["Licencia"]
         tarifa_b_mov = 0.05 if np.isnan(user_info['Tarifa Mov']) else user_info['Tarifa Mov']
@@ -154,6 +210,9 @@ class Taximetro:
             self.tarifa_par = tarifa_b_stop-(tarifa_b_stop*(float(disc_stp)/100))
 
     def create_csv_if_not_exists(self, filename):
+        '''
+        Esta función creará el csv de las carreras, con las variables que hayamos definido previamente, en el caso de que no encuentre un archivo que abrir.
+        '''
         try:
             pd.read_csv(filename)  # Intentar cargar el archivo
         except FileNotFoundError:
@@ -163,18 +222,29 @@ class Taximetro:
 
 
     def handle_events(self, event):
+        '''
+        En este caso los eventos que nos interesa capturar son, que se pulse en el teclado la tecla espacio (K_SPACE) la cual hará lo contrario del flag self.car, de tal forma que si es False (que lo será al inicio de la aplicación) pasa a ser True, y viceversa. De esta forma podemos alternar entre parado y movimiento con una sola tecla. El otro evento que nos interesa es que se pulse en el teclado la tecla enter/return (K_RETURN) que cambiará el estado de la aplicación a la pantalla de fin que nos mostrará las estadísticas de la carrera-
+        '''
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 self.car_mov = not self.car_mov
                 logger.info(f'Estado de movimiento del coche cambiado a: {self.car_mov}')
-            elif event.key == pygame.K_p:
-                self.gameStateManager.set_state('start')
-                logger.info('Cambio de estado a start')
             elif event.key == pygame.K_RETURN:
                 self.gameStateManager.set_state('pantalla_fin')
                 logger.info('Cambio de estado a pantalla_fin')
 
     def run(self):
+        '''
+        El método run lleva a cabo todo el desarrollo de esta clase. En primer lugar genera un csv si no existe con la función vista previamente.
+        Posteriormente genera la pantalla base y, una vez nos aseguramos de que el valor de tiempo se ha guardado correctamente, especificamos el movimiento del coche.
+        Si la flag car_move es True, el coche se moverá 5 píxeles en la pantalla 60 veces por segundo (como vimos al especificar en clock que corre a 60 fps).
+        Si el coche supera el ancho total de la pantalla, en nestro caso 1600, volverá al inicio de la pantalla (valor x 0) dando la sensación de que da la vuelta a la pantalla.
+        Por cada segundo queremos que se aumente la tarifa con los valores que hemos especificado previamente. Dado que la aplicación actualiza su estado 60 veces por segundo, debemos dividir el valor de la tarifa por 60, para que se aumente correctamente cada segundo.
+        Despúes se calcula el tiempo que ha transcurrido la aplicación, restando el tiempo actual al tiempo que se guardó al iniciar la aplicación.
+        Esta resta da un valor int, por lo que para poder adaptarlo a minutos y segundos se utiliza la división entera (//) para los minutos y el resto (%) para los segundos.
+        A continuación se especifica el formato de texto que queremos tener para visualizar el tiempo y el dinero.
+        Finalmente se posiciona en la pantalla donde queremos que se muestre el tiempo trascurrido, el precio, y las tarifas.
+        '''
         self.create_csv_if_not_exists('Carreras.csv')
 
         run_screen = pygame.image.load('Graficos/base_2.jpeg')
@@ -186,9 +256,9 @@ class Taximetro:
                 self.car_position += 5  # Ajusta la velocidad del coche según sea necesario
                 if self.car_position > 1600:  # 1600 es el ancho de la pantalla
                     self.car_position = -self.car.get_width()  # Aparecer en el otro lado
-                self.score += self.tarifa_mov / 60  # Incrementar la puntuación por segundo en movimiento
+                self.score += self.tarifa_mov / 60  # Incrementar el precio por segundo en movimiento
             else:
-                self.score += self.tarifa_par / 60  # Incrementar la puntuación por segundo en parado
+                self.score += self.tarifa_par / 60  # Incrementar el precio por segundo en parado
 
             self.display.blit(self.car, (self.car_position, 600))
 
@@ -209,6 +279,9 @@ class Taximetro:
             self.display.blit(tarifa_stp_text, (50, 200))
 
     def reset(self):
+        '''
+        La función reset nos servirá para volver a poner los valores que usamos para calcular precio, tiempo, posición y movimiento del coche a sus valores por defecto, para que si se lanza una nueva carrera se vuelva a empezar todo desde 0.
+        '''
         self.start_time = time.time()
         self.score = 0
         self.car_position = 20
@@ -216,14 +289,19 @@ class Taximetro:
         logger.info('Valores de Taximetro reseteados')
 
     def get_score(self):
+        #Función para extraer el precio final de la carrera
         return self.score
     
     def get_total_time(self):
+        # Función para extraer la duración total de la carrera
         if self.start_time is None:
             return 0
         return time.time() - self.start_time
 
 class gameStateManager:
+    '''
+    La clase gameStateManager es la que nos permite cambiar de estados en la aplicación, y de esta forma llamar a las diferentes clases que hemos ido definiendo, de esta forma simulamos el ir pasando de pantallas como en una aplicación cualquiera.
+    '''
     def __init__(self, currentState):
         self.currentState = currentState
         self.states = None  # Inicializamos states como None
@@ -235,13 +313,20 @@ class gameStateManager:
         return self.states  # Método para obtener los estados
 
     def get_state(self):
-        return self.currentState
+        return self.currentState # Método para obtener el estado actual
 
     def set_state(self, state):
         logger.info(f'Cambio de estado de {self.currentState} a {state}')
-        self.currentState = state
+        self.currentState = state # Metodo para definir un estado
 
 class pantalla_fin:
+    '''
+    La clase de pantalla fin es la que nos dará las estadísticas finales de la carrera que se acabe de completar. Las variables de __init__ en su mayoría ya son conocidas.
+    Final_price y total_time se fijan a 0 para poder modificarlas fuera de esta clase accediendo a su atributo.
+    csv_update empieza en False para poder modificar el csv de carrera una sola vez, como veremos a continuación.
+    time_stopped nos sirve para resetear los valores de tiempo al inicar una nueva carrera
+    '''
+
     def __init__(self, display, gameStateManager, user):
         self.display = display
         self.gameStateManager = gameStateManager
@@ -255,18 +340,27 @@ class pantalla_fin:
         self.time_stopped = False
 
     def handle_events(self, event):
+        '''
+        En este caso nos interesa gestionar los eventos de pulsar un botón del ratón cuando su posición se encuentra dentro de la posición del rectángulo que define empezar una nueva carrera o salir de la aplicación.
+        Si se selecciona el boton de nueva carrera se resetean los valores de taximetro (precio, tiempo, etc.) y se cambia el estado a la pantalla de introducción.
+        '''
         if event.type == pygame.MOUSEBUTTONDOWN:
             a, b = pygame.mouse.get_pos()
             if self.quit_button_rect.collidepoint((a, b)):
                 self.gameStateManager.set_state('quit')
                 logger.info('Fin del juego seleccionado')
-            elif self.login_button_rect.collidepoint((a, b)):
+            elif self.newrun_button_rect.collidepoint((a, b)):
                 self.gameStateManager.get_states()['taximetro'].reset()
                 self.gameStateManager.set_state('intro')
-                self.reset()
+                self.reset() # Reset de los valores en la pantalla de fin
                 logger.info('Reinicio del juego seleccionado')
 
     def precio_final(self):
+        '''
+        En este caso se definen los botones de quit y nueva carrera de la misma forma que vimos en la pantalla de inicio.
+        Además se incluye una salida de texto para mostrar los valores de precio total y de tiempo total de la carrera.
+        El formato de todas estos cálculos y definiciones es el mismo que los que hemos visto previamente por lo que no se volverán a comentar.
+        '''
         a, b = pygame.mouse.get_pos()
         login_screen = pygame.image.load('Graficos/fin.jpeg')
         font = pygame.font.SysFont('Lucida Console', 70)
@@ -274,7 +368,7 @@ class pantalla_fin:
         color_rect_hover = (91, 23, 202, 0.8)
         color_rect_base = (65, 0, 168, 0.9)
         # Botón Start
-        self.login_button_rect = pygame.Rect(400, 400, 850, 80)
+        self.newrun_button_rect = pygame.Rect(400, 400, 850, 80)
         login_text = font.render('Empezar otra carrera', True, color_font)
         # Botón Quit
         self.quit_button_rect = pygame.Rect(725, 650, 180, 80)
@@ -285,12 +379,12 @@ class pantalla_fin:
         else:
             pygame.draw.rect(self.display, color_rect_base, self.quit_button_rect)
 
-        if self.login_button_rect.collidepoint((a, b)):
-            pygame.draw.rect(self.display, color_rect_hover, self.login_button_rect)
+        if self.newrun_button_rect.collidepoint((a, b)):
+            pygame.draw.rect(self.display, color_rect_hover, self.newrun_button_rect)
         else:
-            pygame.draw.rect(self.display, color_rect_base, self.login_button_rect)   
+            pygame.draw.rect(self.display, color_rect_base, self.newrun_button_rect)   
 
-        self.display.blit(login_text, (self.login_button_rect.x + 5, self.login_button_rect.y + 5))
+        self.display.blit(login_text, (self.newrun_button_rect.x + 5, self.newrun_button_rect.y + 5))
         self.display.blit(quit_text, (self.quit_button_rect.x + 5, self.quit_button_rect.y + 5))
         price_text = self.font.render(f'Precio final: {round(self.final_price, 2)}€', True, self.color_font)
         minutos = int(self.total_time // 60)
@@ -302,6 +396,11 @@ class pantalla_fin:
         self.display.blit(time_text, time_text_rect)
 
     def run(self):
+        ''' 
+        La función de run tomará los valores de precio y tiempo total para poder mostrarlos en pantalla.
+        Después registra el día actual con la hora a la que ha acabado la carrera y la guarda en el formato común en españa de día/mes/año hora:minuto:segundo.
+        Por último se comprueba si el csv se ha actualizado, por defecto este flag se inicia en False. Se guardan todos los datos de la carrera y, para evitar que se sigan generando registros de la misma carrera se cambia el flag a True, de esta forma nos aseguramos que solo se ejecuta una vez en el bucle de juego (si no se nos generarían 60 nuevos registros cada segundo).
+        '''
         if not self.time_stopped:  # Solo para cuando no está detenido aún
             self.final_price = self.gameStateManager.get_states()['taximetro'].get_score()
             self.total_time = self.gameStateManager.get_states()['taximetro'].get_total_time()
@@ -328,6 +427,9 @@ class pantalla_fin:
         logger.info('Valores de pantalla_fin reseteados')
 
 class Quit:
+    '''
+    Finalmente la clase quit gestiona el evento de salida del juego, de tal forma que no de errores. Para ello utilza la función quit de pygame y aparte la función exit de sys.
+    '''
     def __init__(self, display, gameStateManager):
         self.display = display
         self.gameStateManager = gameStateManager
@@ -347,5 +449,6 @@ class Quit:
         exit()
 
 def init_game(user):
+    # Se define la función para empezar el juego, que se utiliza en el script main
     game = Game(user)
     game.run()

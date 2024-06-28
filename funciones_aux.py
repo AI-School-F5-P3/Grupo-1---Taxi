@@ -298,8 +298,8 @@ def Tarifa(empresa, tarifa_mov, tarifa_stp):
         messagebox.showinfo(title="Error", message="Ha de introducirse un número")
         return False
 
-    tarifa_mov = tarifa_mov if tarifa_mov >= 0.01 else 0.01
-    tarifa_stp = tarifa_stp if tarifa_stp >= 0.01 else 0.01
+    tarifa_mov = tarifa_mov if float(tarifa_mov) >= 0.01 else 0.01
+    tarifa_stp = tarifa_stp if float(tarifa_stp) >= 0.01 else 0.01
 
     datos_usuarios = pd.read_csv(User_DB)
     try:

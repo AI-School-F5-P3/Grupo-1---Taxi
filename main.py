@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
-from funciones_aux import LogIn, Register, Pregunta, Respuesta, Descuentos, Descuentos_taxi, LogIn_Empresa, Tarifa
+from funciones_aux import login, registro, pregunta, respuesta, descuentos, descuentos_taxi, login_empresa, tarifa
 from car import init_game
 from logger_config import logger
 from dashboard import Dashboard
@@ -123,12 +123,12 @@ class GUI:
 
     def check_password(self):
         '''
-        Este método llama a una función auxiliar LogIn, explicada en el script de funciones_aux. Esta función devolverá, si todo ha ido bien, si la licencia del usuario es VTC o Taxista, en cuyo caso llevará a la pantalla correspondiente para definir los datos que faltan antes de lanzar el programa, se pasa como argumento el nombre del usuario. Si hay algún problema (contraseña o usuario equivocado, usuario inexistente, etc.) la función devuelve un False, de tal forma que en este punto se mostrara un error al usuario en forma de pop-up indicando que ha cometido algún error al escribir su usuario o contraseña.
+        Este método llama a una función auxiliar login, explicada en el script de funciones_aux. Esta función devolverá, si todo ha ido bien, si la licencia del usuario es VTC o Taxista, en cuyo caso llevará a la pantalla correspondiente para definir los datos que faltan antes de lanzar el programa, se pasa como argumento el nombre del usuario. Si hay algún problema (contraseña o usuario equivocado, usuario inexistente, etc.) la función devuelve un False, de tal forma que en este punto se mostrara un error al usuario en forma de pop-up indicando que ha cometido algún error al escribir su usuario o contraseña.
         El nombre de usuario y la contrseña se extraen de la pantalla previa a esta (login_screen) con el método .get.
         '''
-        tarifa = LogIn(self.user.get(), self.password.get())
+        tarifa = login(self.user.get(), self.password.get())
         user = self.user.get()
-        if not Tarifa:
+        if not tarifa:
             messagebox.showinfo(title = "Error", message = "Nombre de usuario o contraseña equivocados")
             logger.error(f'¡Intento fallido: Nombre de usuario o contraseña incorrecto!') # Control de log
         else:
@@ -188,9 +188,9 @@ class GUI:
         moving_discount = moving_discount if moving_discount else 0
 
         '''
-        Este método llama a una función auxiliar Descuentos, explicada en el script de funciones_aux. Si recupera el valor True porque se han podido aplicar los descuentos se muestra un mensaje de éxito en pop-up y se inicia la aplicación en pygame.
+        Este método llama a una función auxiliar descuentos, explicada en el script de funciones_aux. Si recupera el valor True porque se han podido aplicar los descuentos se muestra un mensaje de éxito en pop-up y se inicia la aplicación en pygame.
         '''
-        if Descuentos(self.user, stopped_discount, moving_discount):
+        if descuentos(self.user, stopped_discount, moving_discount):
             messagebox.showinfo(title = "Exito", message = "Descuentos aplicados")
             logger.info('Pantalla de Descuentos aplicados') # Control de Log
             init_game(self.user)
@@ -249,9 +249,9 @@ class GUI:
         # Si el valor de la tarifa no son válidos o están vacios, se fijan en 0
         tarifa_extra = tarifa_extra if tarifa_extra else 0
 
-        if Descuentos_taxi(self.user, turno, tarifa_extra):
+        if descuentos_taxi(self.user, turno, tarifa_extra):
             '''
-            Este método llama a una función auxiliar Descuentos_taxi, explicada en el script de funciones_aux. Si recupera el valor True porque se han podido aplicar los descuentos se muestra un mensaje de éxito en pop-up y se inicia la aplicación en pygame.
+            Este método llama a una función auxiliar descuentos_taxi, explicada en el script de funciones_aux. Si recupera el valor True porque se han podido aplicar los descuentos se muestra un mensaje de éxito en pop-up y se inicia la aplicación en pygame.
             '''
             messagebox.showinfo(title = "Exito", message = "Descuentos aplicados")
             logger.info('Descuentos aplicados con exito') # Control de Log
@@ -303,15 +303,15 @@ class GUI:
 
     def get_quest(self):
         '''
-        Este método llama a una función auxiliar Pregunta, explicada en el script de funciones_aux. Únicamente devuelve la cadena almacenada de la pregunta secreta y la muestra al usuario mediante un pop-up.
+        Este método llama a una función auxiliar pregunta, explicada en el script de funciones_aux. Únicamente devuelve la cadena almacenada de la pregunta secreta y la muestra al usuario mediante un pop-up.
         '''
-        Pregunta(self.user.get())
+        pregunta(self.user.get())
 
     def change_pswd(self):
         '''
-        Este método llama a una función auxiliar Respuesta, explicada en el script de funciones_aux. Si se ha introducido la respuesta secreta de forma correcta permite cambiar la contrasela.
+        Este método llama a una función auxiliar respuesta, explicada en el script de funciones_aux. Si se ha introducido la respuesta secreta de forma correcta permite cambiar la contrasela.
         '''
-        Respuesta(self.user.get(), self.user_answer.get(), self.new_pswd.get())
+        respuesta(self.user.get(), self.user_answer.get(), self.new_pswd.get())
 
     def login_empresa_screen(self): # Pantalla de Login para representante de Empresa. La estructura es similar a login_screen
         self.clear_screen()
@@ -358,10 +358,10 @@ class GUI:
 
     def check_password_empresa(self):
         '''
-        Este método llama a una función auxiliar LogIn_Empresa, explicada en el script de funciones_aux. Esta función devolverá, si todo ha ido bien, el nombre de la empresa a la que pertenece el representante, llevando al usuario a la pantalla de empresa, donde podrá decidir cambiar la tarifa para los conductores de su empresa, o ver el dashboard con información relevante para su empresa. Si hay algún problema (contraseña o usuario equivocado, usuario inexistente, etc.) la función devuelve un False, de tal forma que en este punto se mostrara un error al usuario en forma de pop-up indicando que ha cometido algún error al escribir su usuario o contraseña.
+        Este método llama a una función auxiliar login_empresa, explicada en el script de funciones_aux. Esta función devolverá, si todo ha ido bien, el nombre de la empresa a la que pertenece el representante, llevando al usuario a la pantalla de empresa, donde podrá decidir cambiar la tarifa para los conductores de su empresa, o ver el dashboard con información relevante para su empresa. Si hay algún problema (contraseña o usuario equivocado, usuario inexistente, etc.) la función devuelve un False, de tal forma que en este punto se mostrara un error al usuario en forma de pop-up indicando que ha cometido algún error al escribir su usuario o contraseña.
         El nombre de usuario y la contrseña se extraen de la pantalla previa a esta (login_empresa_screen) con el método .get.
         '''
-        empresa = LogIn_Empresa(self.user.get(), self.password.get())
+        empresa = login_empresa(self.user.get(), self.password.get())
         if not empresa:
             messagebox.showinfo(title = "Error", message = "Nombre de usuario o contraseña equivocados")
             logger.error(f'¡Intento fallido: Nombre de usuario o contraseña incorrecto!') # Control de log
@@ -445,9 +445,9 @@ class GUI:
         logger.info(f'Tarifa en movimiento fijada en {tarifa_mov}')
 
         '''
-        Este método llama a una función auxiliar Tarifa, explicada en el script de funciones_aux. Si recupera el valor True porque se han podido aplicar las tarifas se muestra un mensaje de éxito en pop-up y se vuelve a la pantalla de inicio.
+        Este método llama a una función auxiliar tarifa, explicada en el script de funciones_aux. Si recupera el valor True porque se han podido aplicar las tarifas se muestra un mensaje de éxito en pop-up y se vuelve a la pantalla de inicio.
         '''
-        if Tarifa(self.empresa, tarifa_mov, tarifa_stopped):
+        if tarifa(self.empresa, tarifa_mov, tarifa_stopped):
             messagebox.showinfo(title = "Exito", message = "Tarifas aplicadas")
             logger.info('Pantalla de tarifas aplicados') # Control de Log
             self.p_inicio()
@@ -535,10 +535,10 @@ class GUI:
 
     def register(self):
         '''
-        Este método llama a una función auxiliar Register, explicada en el script de funciones_aux. Esta función devolverá, si todo ha ido bien un valor True, en cuyo caso permite al usuario ir a la pantalla de Login de usuarios para poder emepzar a usar la aplicación.
+        Este método llama a una función auxiliar registro, explicada en el script de funciones_aux. Esta función devolverá, si todo ha ido bien un valor True, en cuyo caso permite al usuario ir a la pantalla de login de usuarios para poder emepzar a usar la aplicación.
         Las variables se extraen de la pantalla previa (reg_screen) con el método .get.
         '''
-        if Register(self.user.get(), self.password.get(), self.quest.get(), self.answ.get(), self.selected_conductor.get(), self.empresa_sel.get()) == True:
+        if registro(self.user.get(), self.password.get(), self.quest.get(), self.answ.get(), self.selected_conductor.get(), self.empresa_sel.get()) == True:
             self.login_screen()
 
     def pantalla_ayuda(self): # Pantala de ayuda

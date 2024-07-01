@@ -16,7 +16,7 @@ if not os.path.exists(User_DB):
     df = pd.DataFrame(columns=["Usuarios", "Passwords", "Pregunta Secreta", "Respuesta Secreta", "Licencia", "Descuento Parado", "Descuento Movimiento", "Turno", "Tarifa extra", "Tarifa Mov", "Tarifa Stop", "Empresa"])
     df.to_csv(User_DB, index=False)
 
-def LogIn(username, password):
+def login(username, password):
     '''
     Función para iniciar sesión en la interfaz gráfica de tkinter.
     En primer lugar se intenta capturar el error de que la base de datos no pueda accederse, generalmente se debe a que esté abierta a la vez que se intenta editar.
@@ -55,7 +55,7 @@ def LogIn(username, password):
         logger.info(f'Inicio de sesión exitoso para usuario: {username}')
         return user_info["Licencia"]
 
-def LogIn_Empresa(username, password):
+def login_empresa(username, password):
     '''
     Función para iniciar sesión en la interfaz gráfica de tkinter.
     En primer lugar se intenta capturar el error de que la base de datos no pueda accederse, generalmente se debe a que esté abierta a la vez que se intenta editar. O que no haya un archivo porque no se ha registrado ninguna empresa en este momento.
@@ -100,7 +100,7 @@ def LogIn_Empresa(username, password):
         return empresa
 
 
-def Register(username, password, s_quest, s_answer, conductor, empresa):
+def registro(username, password, s_quest, s_answer, conductor, empresa):
     '''
     Función para registrar un conductor en la base de datos.
     En primer lugar se intenta capturar el error de que la base de datos no pueda accederse, generalmente se debe a que esté abierta a la vez que se intenta editar.
@@ -149,7 +149,8 @@ def Register(username, password, s_quest, s_answer, conductor, empresa):
             return False
 
         password_hash = hashlib.sha256(password.encode('utf-8')).hexdigest()
-        df = pd.DataFrame({'Usuarios': [username], 'Passwords': [password_hash], 'Pregunta Secreta': [s_quest], 'Respuesta Secreta': [s_answer], 'Licencia': [conductor], 'Empresa': [empresa]})
+        answer_hash = hashlib.sha256(s_answer.encode('utf-8')).hexdigest()
+        df = pd.DataFrame({'Usuarios': [username], 'Passwords': [password_hash], 'Pregunta Secreta': [s_quest], 'Respuesta Secreta': [answer_hash], 'Licencia': [conductor], 'Empresa': [empresa]})
         datos_usuarios = pd.concat([datos_usuarios, df], ignore_index=True)
         datos_usuarios.to_csv(User_DB, index=False)
         messagebox.showinfo(title="Registro completado", message="Registro completado con éxito")
@@ -157,7 +158,7 @@ def Register(username, password, s_quest, s_answer, conductor, empresa):
         return True
 
 
-def Pregunta(username):
+def pregunta(username):
     '''
     Función para recuperar la pregunta secreta del usuario. 
     En primer lugar se convierte el nombre de usuario a mínusculas, formato en el que están los usuarios en la base de datos.
@@ -180,7 +181,7 @@ def Pregunta(username):
         pregunta_s = usuarios_info["Pregunta Secreta"]
         messagebox.showinfo(title = "Pregunta", message = pregunta_s)
 
-def Respuesta(username, answer, new_pswd):
+def respuesta(username, answer, new_pswd):
     '''
     Función que comprueba que el usuario haya introducido la respuesta secreta correcta. Se capturan los errores de no poder acceder a la base de datos (probablemente porque en ese momento esté abierta).
     Se convierten el usuario y la respuesta a mínusculas, formato en el que se encuentran en la base de datos y se comprueba que los formularios no estén vacíos.
@@ -219,8 +220,10 @@ def Respuesta(username, answer, new_pswd):
         messagebox.showinfo(title="Error", message="Usuario no encontrado o respuesta incorrecta.")
         logger.error('Usuario no encontrado o respuesta incorrecta.')
         return False
+    
+    user_answer = hashlib.sha256(answer.encode('utf-8')).hexdigest()
 
-    if local_answ == answer:
+    if local_answ == user_answer:
         if len(new_pswd) < 4:
             messagebox.showinfo(title="Error", message="La contraseña debe tener al menos 4 caracteres.")
             logger.error('Contraseña demasiado corta.')
@@ -241,7 +244,7 @@ def Respuesta(username, answer, new_pswd):
         messagebox.showinfo(title="Error", message="Respuesta Incorrecta")
         logger.error('Intento de recuperación de contraseña fallida: Respuesta Secreta Incorrecta')
         
-def Descuentos(username, stop_disc, mov_disc): 
+def descuentos(username, stop_disc, mov_disc): 
     '''
     Función que aplica, para el usuario con licencia VTC logeado, los descuentos que haya indicado en la pantalla de descuentos. Estos se guardan en formato int(entero) para poder trabajar con ellos correctamente en pygame. Se capturan además los errores de que no se tenga permiso de acceso a la base de datos o de que no se haya incluido un número entero. Podría trabajarse con numeros decimales, pero consideramos que es poco probable que alguien quiera hacer un descuento porcentual con decimales.
     '''
@@ -263,7 +266,7 @@ def Descuentos(username, stop_disc, mov_disc):
         return False
 
 
-def Descuentos_taxi(username, turno, tarifa): 
+def descuentos_taxi(username, turno, tarifa): 
     '''
     Función que aplica, para el usuario con licencia de taxi logeado, la tarifa que haya señalado en la pantalla de tarifa. Este se guarda en formato int(entero) para poder trabajar correctamente en pygame. Se capturan además los errores de que no se tenga permiso de acceso a la base de datos o de que no se haya incluido un número entero. Podría trabajarse con numeros decimales, pero consideramos que es poco probable que alguien quiera hacer un descuento porcentual con decimales.
     '''
@@ -283,7 +286,7 @@ def Descuentos_taxi(username, turno, tarifa):
         messagebox.showinfo(title="Error", message="El valor tiene que ser un número entero (porcenataje del total).")
         return False
     
-def Tarifa(empresa, tarifa_mov, tarifa_stp):
+def tarifa(empresa, tarifa_mov, tarifa_stp):
     '''
     Función que aplica las tarifas que haya indicado el representante de la empresa para todos los usuarios de dicha empresa. 
     Se comprueba que el valor sea númerico intentando convertirlo a entero (los inputs son siempre strings) en un try except. Si no se puede se devuelve el mensaje en pop-up de que tiene que introducirse un valor numérico.

@@ -1,11 +1,11 @@
-import dash
+import dash # la librería dash permite crear aplicaciones web interactivas con Python.
 from dash import dcc, html
-import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
-import io
-import base64
-import random
+import pandas as pd # Pandas es una librería de manipulación y análisis de datos.
+import seaborn as sns # Seaborn es una librería de visualización de datos basada en Matplotlib.
+import matplotlib.pyplot as plt # Matplotlib es una librería de visualización de datos en 2D.
+import io # La librería io permite trabajar con archivos de entrada y salida.
+import base64 # La librería base64 permite codificar y decodificar archivos en base64.
+import random # La librería random permite generar números aleatorios.
 
 # Generar datos aleatorios
 '''
@@ -13,10 +13,10 @@ Se utiliza el método choices de la biblioteca random (incluida con python) para
 Para días tecnicamente deberían generarse los valores de días en función del mes, ya que de esta forma todos los meses tienen 31 días, pero para una simulación nos puede valer.
 Una vez se han generado los datos se incluyen en un dataframe de pandas con la misma estructura que el csv que tendríamos de carreras.
 '''
-dia = random.choices(range(1, 32), k=10000) 
+dia = random.choices(range(1, 32), k=10000) # Se generan 10.000 números aleatorios entre 1 y 31. 
 mes = random.choices(range(1, 13), k=10000)
-segundos = random.choices(range(300, 21600), k=10000) 
-precio = random.choices(range(5, 300), k=10000)
+segundos = random.choices(range(300, 21600), k=10000) # Entre 5 minutos y 6 horas.
+precio = random.choices(range(5, 300), k=10000) # Entre 5 y 300 euros.
 horas = random.choices(range(1, 23), k=10000)
 horario = []
 for item in horas:
@@ -29,7 +29,7 @@ for item in horas:
     elif 0 < item < 6:
         horario.append("Madrugada")
 
-df = pd.DataFrame({'Dia': dia, 'Mes': mes, 'Segundos': segundos, 'Precio': precio, 'Horario': horario})
+df = pd.DataFrame({'Dia': dia, 'Mes': mes, 'Segundos': segundos, 'Precio': precio, 'Horario': horario}) # Se crea un DataFrame con los datos generados.
 
 # Filtrar datos para junio
 df_junio = df.loc[df["Mes"] == 6]
@@ -49,18 +49,18 @@ sns.set_palette("pastel")
 plt.figure(figsize=(17, 10))
 
 # Gráfico de línea: Precio medio por mes
-plt.subplot(3, 2, 1) # subplot nos permite colocar los gráficos en posiciones concretas
-sns.lineplot(data=df, x='Mes', y='Precio', errorbar=None, color = '#541388')
+plt.subplot(3, 2, 1) # Se crea un subplot (un gráfico dentro de otro gráfico) con 3 filas y 2 columnas. # subplot nos permite colocar los gráficos en posiciones concretas
+sns.lineplot(data=df, x='Mes', y='Precio', errorbar=None, color = '#541388') # Crea el gráfico de línea.
 plt.title('Precio Medio por Mes')
 
 # Histograma total de carreras por mes
-plt.subplot(3, 2, 2)
-sns.countplot(data=df, x='Mes', color = '#541388')
+plt.subplot(3, 2, 2) # Se crea un subplot en la segunda posición.
+sns.countplot(data=df, x='Mes', color = '#541388') # Crea el histograma.
 plt.title('Histograma de Carreras por Mes')
-plt.ylabel('Recuento carreras')
+plt.ylabel('Recuento carreras') # Añade etiqueta al eje Y.
 
 # Gráfico de línea: Media de precio por día en Junio
-plt.subplot(3, 2, 3)
+plt.subplot(3, 2, 3) # Se crea un subplot en la tercera posición.
 sns.lineplot(data=df_junio, x='Dia', y='Precio', errorbar=None, color = '#541388')
 plt.title('Media de Precio por Día en Junio')
 
@@ -83,21 +83,21 @@ plt.title('Media de precio por Horario en Junio')
 plt.ylabel('Media de Precio')
 # Ajustar diseño y guardar figura en un archivo
 plt.tight_layout()
-plt.savefig('plot.png')  # Guardar el gráfico como imagen PNG
+plt.savefig('plot.png')  # Guarda el gráfico como imagen PNG
 
 # Convertir imagen a base64 para mostrar en Dash
-plt.close()
+plt.close() # Cierra la figura para liberar memoria.
 image_filename = 'plot.png'
-encoded_image = base64.b64encode(open(image_filename, 'rb').read()).decode('ascii')
+encoded_image = base64.b64encode(open(image_filename, 'rb').read()).decode('ascii') # Conversor.
 
 # Crear aplicación Dash
 app = dash.Dash(__name__)
 
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css'] # Estilos externos para la aplicación Dash.
 
 class Dashboard:
     def __init__(self):
-        self.app = dash.Dash(__name__)
+        self.app = dash.Dash(__name__) # Inicializar la aplicación Dash.
         self.server = self.app.server
 # Definir el layout de la aplicación con los colores básicos de nuestra aplicación y con la fuente que hemos usado habitualmente.
         self.app.layout = html.Div(style={'backgroundColor': '#541388', 'color': '#C8F50A', 'font-family': 'Lucida Console'}, children=[
@@ -141,7 +141,7 @@ class Dashboard:
             # Mostrar las imágenes en un layout de cuadrícula
             html.Div([
                 html.Div([
-                    html.Img(src='data:image/png;base64,{}'.format(encoded_image))
+                    html.Img(src='data:image/png;base64,{}'.format(encoded_image)) # Muestra la imagen del gráfico.
                 ], className='six columns'),
             ], className='row'),
         ])

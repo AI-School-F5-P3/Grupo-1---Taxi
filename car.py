@@ -174,8 +174,14 @@ class Taximetro:
         self.gameStateManager = gameStateManager
         self.car = pygame.image.load('Graficos/car.png')
         self.car_position = 20
+        self.car_vel = 5
+        self.S_Width = 1600
+        self.fps = 60
+        self.car_height = 600
         self.car_mov = False
+        self.contadores_pos_width = 50
         self.font = pygame.font.SysFont('Lucida Console', 30)
+        self.color_font = (200, 245, 10, 1)
         self.start_time = None  # Inicializamos start_time como None
         self.score = 0
         self.datos_usuarios = pd.read_csv("Usuarios.csv")
@@ -249,34 +255,33 @@ class Taximetro:
 
         run_screen = pygame.image.load('Graficos/base_2.jpeg')
         self.display.blit(run_screen, (0, 0))
-        color_font = (200, 245, 10, 1)
 
         if self.start_time is not None:  # Aseguramos que start_time tenga un valor antes de usarlo
             if self.car_mov:
-                self.car_position += 5  # Ajusta la velocidad del coche según sea necesario
-                if self.car_position > 1600:  # 1600 es el ancho de la pantalla
+                self.car_position += self.car_vel  # Ajusta la velocidad del coche según sea necesario
+                if self.car_position > self.S_Width:  # 1600 es el ancho de la pantalla
                     self.car_position = -self.car.get_width()  # Aparecer en el otro lado
-                self.score += self.tarifa_mov / 60  # Incrementar el precio por segundo en movimiento
+                self.score += self.tarifa_mov / self.fps  # Incrementar el precio por segundo en movimiento
             else:
-                self.score += self.tarifa_par / 60  # Incrementar el precio por segundo en parado
+                self.score += self.tarifa_par / self.fps  # Incrementar el precio por segundo en parado
 
-            self.display.blit(self.car, (self.car_position, 600))
+            self.display.blit(self.car, (self.car_position, self.car_height))
 
             # Calcular el tiempo transcurrido en minutos y segundos
             elapsed_time_s = time.time() - self.start_time
             elapsed_minutes = int(elapsed_time_s // 60)
             elapsed_seconds = int(elapsed_time_s % 60)
-            clock_text = self.font.render(f'Tiempo: {elapsed_minutes:02}:{elapsed_seconds:02}', True, (color_font))
-            self.display.blit(clock_text, (50, 50))
+            clock_text = self.font.render(f'Tiempo: {elapsed_minutes:02}:{elapsed_seconds:02}', True, (self.color_font))
+            self.display.blit(clock_text, (self.contadores_pos_width, 50))
 
             # Mostrar la puntuación
-            score_text = self.font.render(f'Precio: {round(self.score, 2)} €', True, (color_font))
-            self.display.blit(score_text, (50, 100))
+            score_text = self.font.render(f'Precio: {round(self.score, 2)} €', True, (self.color_font))
+            self.display.blit(score_text, (self.contadores_pos_width, 100))
 
-            tarifa_mov_text = self.font.render(f'Tarifa en movimiento: {round(self.tarifa_mov, 2)}', True, (color_font))
-            self.display.blit(tarifa_mov_text, (50, 150))
-            tarifa_stp_text = self.font.render(f'Tarifa en parado: {round(self.tarifa_par, 2)}', True, (color_font))
-            self.display.blit(tarifa_stp_text, (50, 200))
+            tarifa_mov_text = self.font.render(f'Tarifa en movimiento: {round(self.tarifa_mov, 2)}', True, (self.color_font))
+            self.display.blit(tarifa_mov_text, (self.contadores_pos_width, 150))
+            tarifa_stp_text = self.font.render(f'Tarifa en parado: {round(self.tarifa_par, 2)}', True, (self.color_font))
+            self.display.blit(tarifa_stp_text, (self.contadores_pos_width, 200))
 
     def reset(self):
         '''
@@ -333,6 +338,8 @@ class pantalla_fin:
         self.font = pygame.font.SysFont('Lucida Console', 70)
         self.color_font = (200, 245, 10, 1)
         self.color_background = (65, 0, 168, 0.9)
+        self.color_rect_hover = (91, 23, 202, 0.8)
+        self.color_rect_base = (65, 0, 168, 0.9)
         self.final_price = 0
         self.total_time = 0
         self.user = user
@@ -364,25 +371,25 @@ class pantalla_fin:
         a, b = pygame.mouse.get_pos()
         login_screen = pygame.image.load('Graficos/fin.jpeg')
         font = pygame.font.SysFont('Lucida Console', 70)
-        color_font = (200, 245, 10, 1)
-        color_rect_hover = (91, 23, 202, 0.8)
-        color_rect_base = (65, 0, 168, 0.9)
+        
         # Botón Start
         self.newrun_button_rect = pygame.Rect(400, 400, 850, 80)
-        login_text = font.render('Empezar otra carrera', True, color_font)
+        login_text = font.render('Empezar otra carrera', True, self.color_font)
+        
         # Botón Quit
         self.quit_button_rect = pygame.Rect(725, 650, 180, 80)
-        quit_text = font.render('Quit', True, color_font)
+        quit_text = font.render('Quit', True, self.color_font)
         self.display.blit(login_screen, (0, 0))
+        
         if self.quit_button_rect.collidepoint((a, b)):
-            pygame.draw.rect(self.display, color_rect_hover, self.quit_button_rect)
+            pygame.draw.rect(self.display, self.color_rect_hover, self.quit_button_rect)
         else:
-            pygame.draw.rect(self.display, color_rect_base, self.quit_button_rect)
+            pygame.draw.rect(self.display, self.color_rect_base, self.quit_button_rect)
 
         if self.newrun_button_rect.collidepoint((a, b)):
-            pygame.draw.rect(self.display, color_rect_hover, self.newrun_button_rect)
+            pygame.draw.rect(self.display, self.color_rect_hover, self.newrun_button_rect)
         else:
-            pygame.draw.rect(self.display, color_rect_base, self.newrun_button_rect)   
+            pygame.draw.rect(self.display, self.color_rect_base, self.newrun_button_rect)   
 
         self.display.blit(login_text, (self.newrun_button_rect.x + 5, self.newrun_button_rect.y + 5))
         self.display.blit(quit_text, (self.quit_button_rect.x + 5, self.quit_button_rect.y + 5))

@@ -13,8 +13,11 @@ class GUI:
         self.root = tk.Tk() # Inicia la pantalla de tkinter
         self.root.title("Taxea") # Fija el nombre que aparece en la ventana 
         self.root.geometry('800x600') # Fija el tamaño por defecto de la pantalla al abrir la aplicación. En píxeles.
-        self.root.configure(bg='#541388') # Establece el color del fondo para toda la ejecución de tkinter (hexadecimal, es morado)
-
+        self.morado = '#541388'
+        self.verde = '#C8F50A'
+        self.root.configure(bg=self.morado) # Establece el color del fondo para toda la ejecución de tkinter (hexadecimal, es morado)
+        self.title_font = ('Lucida Console', 20)
+        self.label_font = ('Lucida Console', 16)
         self.empresa = None # Se fija la variable de empresa que la vamos a necesitar en metodos posteriores
 
         self.style_button = {'font': ('Lucida Console', 16), 'bg': '#C8F50A', 'fg': '#541388', 'padx': 20, 'pady': 10, 'bd': 0}
@@ -65,13 +68,13 @@ class GUI:
         self.ayuda.pack(pady=30)
 
         # Boton para generar el logo
-        self.marco = tk.Frame(self.root, width=150, height=150, bg = '#541388')
+        self.marco = tk.Frame(self.root, width=150, height=150, bg = self.morado)
         self.marco.pack()
         self.marco.place(anchor = 'center', relx = 0.5, rely = 0.85)
 
         self.logo = tk.PhotoImage(file = 'Graficos/logo_cuadrado.png')
 
-        self.label= tk.Label(self.marco, image = self.logo, bg = '#541388')
+        self.label= tk.Label(self.marco, image = self.logo, bg = self.morado)
         self.label.pack()
 
 
@@ -79,21 +82,21 @@ class GUI:
         self.clear_screen()
         
         # Titulo que indica que la pantalla es de inicio de sesión
-        self.label_inicio = tk.Label(self.root, text="Inicie Sesión", font=('Lucida Console', 20), bg='#541388', fg='white')
+        self.label_inicio = tk.Label(self.root, text="Inicie Sesión", font=self.title_font, bg=self.morado, fg='white')
         self.label_inicio.pack(pady=20)
         
         # Titulo que indica que la siguiente entrada de texto es para el nombre de Usuario
-        self.label_user = tk.Label(self.root, text="Usuario:", font=('Lucida Console', 16), bg='#541388', fg='white')
+        self.label_user = tk.Label(self.root, text="Usuario:", font=self.label_font, bg=self.morado, fg='white')
         self.label_user.pack(pady=5)
         # Entrada de usuario para el nombre de Usuario
-        self.user = tk.Entry(self.root, font=('Lucida Console', 16))
+        self.user = tk.Entry(self.root, font=self.label_font)
         self.user.pack(pady=5)
         
         # Título que indica que la siguiente entrada texto es para la contraseña
-        self.label_password = tk.Label(self.root, text="Contraseña:", font=('Lucida Console', 16), bg='#541388', fg='white')
+        self.label_password = tk.Label(self.root, text="Contraseña:", font=self.label_font, bg=self.morado, fg='white')
         self.label_password.pack(pady=5)
         # Entrada de usuario para la contraseña
-        self.password = tk.Entry(self.root, font=('Lucida Console', 16), show='*') #show = * permite que la contraseña sea secreta, sustituyendo las letras por asteriscos
+        self.password = tk.Entry(self.root, font=self.label_font, show='*') #show = * permite que la contraseña sea secreta, sustituyendo las letras por asteriscos
         self.password.pack(pady=5)
         
          # Boton de inicio de sesión, lleva al método check_password
@@ -109,13 +112,13 @@ class GUI:
         self.button_back.pack(pady=10)
 
         #Logo
-        self.marco = tk.Frame(self.root, width=150, height=150, bg = '#541388')
+        self.marco = tk.Frame(self.root, width=150, height=150, bg = self.morado)
         self.marco.pack()
         self.marco.place(anchor = 'center', relx = 0.5, rely = 0.85)
 
         self.logo = tk.PhotoImage(file = 'Graficos/logo_cuadrado.png')
 
-        self.label= tk.Label(self.marco, image = self.logo, bg = '#541388')
+        self.label= tk.Label(self.marco, image = self.logo, bg = self.morado)
         self.label.pack()
 
     def check_password(self):
@@ -140,23 +143,23 @@ class GUI:
         self.clear_screen()
         self.user = user
         # Titulo de la pantalla
-        self.label_disc = tk.Label(self.root, text="Descuentos", font=('Lucida Console', 20), bg='#541388', fg='white')
+        self.label_disc = tk.Label(self.root, text="Descuentos", font=self.title_font, bg=self.morado, fg='white')
         self.label_disc.pack(pady=20)
         
         # Titulo que indica que la siguiente entrada de texto es para fijar el porcentaje de descuento en parado
-        self.label_prcnt_stp = tk.Label(self.root, text="Porcentaje de descuento parado", font=('Lucida Console', 16), bg='#541388', fg='white')
+        self.label_prcnt_stp = tk.Label(self.root, text="Porcentaje de descuento parado", font=self.label_font, bg=self.morado, fg='white')
         self.label_prcnt_stp.pack(pady=10)
         
         # Entrada de texto para porcentaje de descuento en parado
-        self.discount_stopped = tk.Entry(self.root, font=('Lucida Console', 16))
+        self.discount_stopped = tk.Entry(self.root, font=self.label_font)
         self.discount_stopped.pack(pady=10)
         
         # Titulo que indica que la siguiente entrada de texto es para fijar el porcentaje de descuento en movimiento
-        self.label_prcnt_mov = tk.Label(self.root, text="Porcentaje de descuento movimiento", font=('Lucida Console', 16), bg='#541388', fg='white')
+        self.label_prcnt_mov = tk.Label(self.root, text="Porcentaje de descuento movimiento", font=self.label_font, bg=self.morado, fg='white')
         self.label_prcnt_mov.pack(pady=10)
 
         # Entrada de texto para porcentaje de descuento en movimiento
-        self.discount_moving = tk.Entry(self.root, font=('Lucida Console', 16))
+        self.discount_moving = tk.Entry(self.root, font=self.label_font)
         self.discount_moving.pack(pady=10)
         
         # Boton para guardar cambios, incluye como command una función lambda para poder pasar en el método save_discounts el usuario como argumento.
@@ -164,13 +167,13 @@ class GUI:
         self.submit.pack(pady=20)
 
         # Logo
-        self.marco = tk.Frame(self.root, width=150, height=150, bg = '#541388')
+        self.marco = tk.Frame(self.root, width=150, height=150, bg = self.morado)
         self.marco.pack()
         self.marco.place(anchor = 'center', relx = 0.5, rely = 0.85)
 
         self.logo = tk.PhotoImage(file = 'Graficos/logo_cuadrado.png')
 
-        self.label= tk.Label(self.marco, image = self.logo, bg = '#541388')
+        self.label= tk.Label(self.marco, image = self.logo, bg = self.morado)
         self.label.pack()
     
         logger.info('Pantalla de Descuento') # Control de Log
@@ -197,11 +200,11 @@ class GUI:
         self.user = user
         
         # Titulo de la pantalla
-        self.label_tarifa = tk.Label(self.root, text="Tarifas", font=('Lucida Console', 20), bg='#541388', fg='white')
+        self.label_tarifa = tk.Label(self.root, text="Tarifas", font=self.title_font, bg=self.morado, fg='white')
         self.label_tarifa.pack(pady=20)
         
         # Titulo que indica que el siguiente menu de opciones es para definir el turno
-        self.label_turno = tk.Label(self.root, text="Turno", font=('Lucida Console', 16), bg='#541388', fg='white')
+        self.label_turno = tk.Label(self.root, text="Turno", font=self.label_font, bg=self.morado, fg='white')
         self.label_turno.pack(pady=10)
 
         # Lista de turnos para el menu
@@ -211,15 +214,15 @@ class GUI:
 
         # Menu droprdown de turnos
         self.dropdown_turno = tk.OptionMenu(self.root, self.turno, *turnos_opt)
-        self.dropdown_turno.config(font=('Lucida Console', 16), bg='#C8F50A', fg='#4100A8', width=20)
+        self.dropdown_turno.config(font=self.label_font, bg=self.verde, fg='#4100A8', width=20)
         self.dropdown_turno.pack(pady=5)
         
         # Titulo que indica que la siguiente entrada de texto es para definir el porcentaje de aumento de tarifa (para turno nocturno)
-        self.label_prcnt = tk.Label(self.root, text="Porcentaje de aumento de tarifa (solo para noche)", font=('Lucida Console', 16), bg='#541388', fg='white')
+        self.label_prcnt = tk.Label(self.root, text="Porcentaje de aumento de tarifa (solo para noche)", font=self.label_font, bg=self.morado, fg='white')
         self.label_prcnt.pack(pady=10)
         
         # Entrada de texto para tarifa
-        self.tarifa_extra = tk.Entry(self.root, font=('Lucida Console', 16))
+        self.tarifa_extra = tk.Entry(self.root, font=self.label_font)
         self.tarifa_extra.pack(pady=10)
         
         # Boton para guardar cambios, como command toma una función lambda  que permite ejecutar el método save_discounts_t con el argumento de usuario
@@ -227,13 +230,13 @@ class GUI:
         self.submit.pack(pady=20)
 
         # Logo
-        self.marco = tk.Frame(self.root, width=150, height=150, bg = '#541388')
+        self.marco = tk.Frame(self.root, width=150, height=150, bg = self.morado)
         self.marco.pack()
         self.marco.place(anchor = 'center', relx = 0.5, rely = 0.85)
 
         self.logo = tk.PhotoImage(file = 'Graficos/logo_cuadrado.png')
 
-        self.label= tk.Label(self.marco, image = self.logo, bg = '#541388')
+        self.label= tk.Label(self.marco, image = self.logo, bg = self.morado)
         self.label.pack()
 
         logger.info('Pantalla de turno') # Control de Log
@@ -257,15 +260,15 @@ class GUI:
     def res_pswd(self): # Pantalla para reiniciar la contraseña en clase de olvido
         self.clear_screen()
         
-        self.label_reset = tk.Label(self.root, text="Reiniciar contraseña", font=('Lucida Console', 20), bg='#541388', fg='white')
+        self.label_reset = tk.Label(self.root, text="Reiniciar contraseña", font=self.title_font, bg=self.morado, fg='white')
         self.label_reset.pack(pady=20)
 
         # Titulo que indica que la siguiente entrada de texto es para el nombre de usuario
-        self.label_user = tk.Label(self.root, text="Nombre de usuario", font=('Lucida Console', 16), bg='#541388', fg='white')
+        self.label_user = tk.Label(self.root, text="Nombre de usuario", font=self.label_font, bg=self.morado, fg='white')
         self.label_user.pack(pady = 5)
 
         # Entrada de texto para el Usuario
-        self.user = tk.Entry(self.root, font=('Lucida Console', 16))
+        self.user = tk.Entry(self.root, font=self.label_font)
         self.user.pack(pady=10)
 
         # Botón para mostrar la pregunta secreta, será buscada con el método get_quest, spoiler, la muestra en un pop-up.
@@ -273,19 +276,19 @@ class GUI:
         self.quest_get.pack(pady=10)
         
         # Titulo que indica que la siguiente entrada de texto es para la respuesta secreta
-        self.label_answ = tk.Label(self.root, text="Escriba su respuesta secreta", font=('Lucida Console', 16), bg='#541388', fg='white')
+        self.label_answ = tk.Label(self.root, text="Escriba su respuesta secreta", font=self.label_font, bg=self.morado, fg='white')
         self.label_answ.pack(pady=10)
         
         # Entrada de texto para la respuesta secreta
-        self.user_answer = tk.Entry(self.root, font=('Lucida Console', 16))
+        self.user_answer = tk.Entry(self.root, font=self.label_font)
         self.user_answer.pack(pady=10)
         
         # Titulo que indica que la siguiente entrada de texto es para la nueva contraseña
-        self.label_new_pswd = tk.Label(self.root, text="Nueva contraseña", font=('Lucida Console', 16), bg='#541388', fg='white')
+        self.label_new_pswd = tk.Label(self.root, text="Nueva contraseña", font=self.label_font, bg=self.morado, fg='white')
         self.label_new_pswd.pack(pady=10)
         
         # Entrada de texto para la nueva contraseña
-        self.new_pswd = tk.Entry(self.root, font=('Lucida Console', 16), show='*')
+        self.new_pswd = tk.Entry(self.root, font=self.label_font, show='*')
         self.new_pswd.pack(pady=10)
         
         # Boton para confirmar los datos introducidos y cambiar la contraseña
@@ -314,21 +317,21 @@ class GUI:
         self.clear_screen()
 
         # Titulo de inicio de sesion
-        self.label_inicio = tk.Label(self.root, text="Inicie Sesión", font=('Lucida Console', 20), bg='#541388', fg='white')
+        self.label_inicio = tk.Label(self.root, text="Inicie Sesión", font=self.title_font, bg=self.morado, fg='white')
         self.label_inicio.pack(pady=20)
         
         # Titulo que indica que la siguiente entrada de texto es para el nombre de Usuario
-        self.label_user = tk.Label(self.root, text="Usuario:", font=('Lucida Console', 16), bg='#541388', fg='white')
+        self.label_user = tk.Label(self.root, text="Usuario:", font=self.label_font, bg=self.morado, fg='white')
         self.label_user.pack(pady=5)
         # Entrada de Usuario
-        self.user = tk.Entry(self.root, font=('Lucida Console', 16))
+        self.user = tk.Entry(self.root, font=self.label_font)
         self.user.pack(pady=5)
         
         # Titulo que indica que la siguiente entrada de texto es para la contraseña
-        self.label_password = tk.Label(self.root, text="Contraseña:", font=('Lucida Console', 16), bg='#541388', fg='white')
+        self.label_password = tk.Label(self.root, text="Contraseña:", font=self.label_font, bg=self.morado, fg='white')
         self.label_password.pack(pady=5)
         # Entrada de contraseña
-        self.password = tk.Entry(self.root, font=('Lucida Console', 16), show='*')
+        self.password = tk.Entry(self.root, font=self.label_font, show='*')
         self.password.pack(pady=5)
         
         # Boton que lleva al método check_password_empresa
@@ -344,13 +347,13 @@ class GUI:
         self.button_back.pack(pady=10)
 
         #Logo
-        self.marco = tk.Frame(self.root, width=150, height=150, bg = '#541388')
+        self.marco = tk.Frame(self.root, width=150, height=150, bg = self.morado)
         self.marco.pack()
         self.marco.place(anchor = 'center', relx = 0.5, rely = 0.85)
 
         self.logo = tk.PhotoImage(file = 'Graficos/logo_cuadrado.png')
 
-        self.label= tk.Label(self.marco, image = self.logo, bg = '#541388')
+        self.label= tk.Label(self.marco, image = self.logo, bg = self.morado)
         self.label.pack()
 
     def check_password_empresa(self):
@@ -384,32 +387,32 @@ class GUI:
         self.button_back.pack(pady=10)
 
         # Logo
-        self.marco = tk.Frame(self.root, width=150, height=150, bg = '#541388')
+        self.marco = tk.Frame(self.root, width=150, height=150, bg = self.morado)
         self.marco.pack()
         self.marco.place(anchor = 'center', relx = 0.5, rely = 0.85)
 
         self.logo = tk.PhotoImage(file = 'Graficos/logo_cuadrado.png')
 
-        self.label= tk.Label(self.marco, image = self.logo, bg = '#541388')
+        self.label= tk.Label(self.marco, image = self.logo, bg = self.morado)
         self.label.pack()
 
     def pantalla_tarifa(self): # Pantalla para cambiar tarifas de una empresa
         self.clear_screen()
 
         # Titulo que indica que la siguiente entrada de texto es para la tarifa en movimiento
-        self.tarifa_mov = tk.Label(self.root, text="Cambio tarifa movimiento (p.ej. 0.06€/s)", font=('Lucida Console', 16), bg='#541388', fg='white')
+        self.tarifa_mov = tk.Label(self.root, text="Cambio tarifa movimiento (p.ej. 0.06€/s)", font=self.label_font, bg=self.morado, fg='white')
         self.tarifa_mov.pack(pady= 20)
 
         # Entrada de texto para la tarifa en movimiento
-        self.tarifa_mov_change = tk.Entry(self.root, font=('Lucida Console', 16))
+        self.tarifa_mov_change = tk.Entry(self.root, font=self.label_font)
         self.tarifa_mov_change.pack(pady = 10)
 
         # Titulo que indica que la siguiente entrada de texto es para la tarifa en parado
-        self.tarifa_stop = tk.Label(self.root, text="Cambio tarifa parado (p.ej. 0.03€/s)", font=('Lucida Console', 16), bg='#541388', fg='white')
+        self.tarifa_stop = tk.Label(self.root, text="Cambio tarifa parado (p.ej. 0.03€/s)", font=self.label_font, bg=self.morado, fg='white')
         self.tarifa_stop.pack(pady= 20)
 
         # Entrada de texto para la tarifa en parado
-        self.tarifa_stop_change = tk.Entry(self.root, font=('Lucida Console', 16))
+        self.tarifa_stop_change = tk.Entry(self.root, font=self.label_font)
         self.tarifa_stop_change.pack(pady = 10)
 
         # Boton para confirmar cambios, llama a la función set_tarifas
@@ -422,13 +425,13 @@ class GUI:
         self.button_back.pack(pady=10)
 
         # Logo
-        self.marco = tk.Frame(self.root, width=150, height=150, bg = '#541388')
+        self.marco = tk.Frame(self.root, width=150, height=150, bg = self.morado)
         self.marco.pack()
         self.marco.place(anchor = 'center', relx = 0.5, rely = 0.85)
 
         self.logo = tk.PhotoImage(file = 'Graficos/logo_cuadrado.png')
 
-        self.label= tk.Label(self.marco, image = self.logo, bg = '#541388')
+        self.label= tk.Label(self.marco, image = self.logo, bg = self.morado)
         self.label.pack()
 
     def set_tarifas(self): # Método para definir las tarifas de empresa
@@ -457,39 +460,39 @@ class GUI:
         self.clear_screen()
         
         # Titulo de la pantalla de Registro
-        self.label_reg = tk.Label(self.root, text='Registro', font=('Lucida Console', 20), bg='#541388', fg='white')
+        self.label_reg = tk.Label(self.root, text='Registro', font=self.title_font, bg=self.morado, fg='white')
         self.label_reg.pack(pady=10)
         
         # Titulo que indica que la siguiente entrada de texto es para el nombre de Usuario
-        self.label_user = tk.Label(self.root, text="Usuario:", font=('Lucida Console', 16), bg='#541388', fg='white')
+        self.label_user = tk.Label(self.root, text="Usuario:", font=self.label_font, bg=self.morado, fg='white')
         self.label_user.pack(pady = 5)
         # Entrada de Usuario
-        self.user = tk.Entry(self.root, font=('Lucida Console', 16))
+        self.user = tk.Entry(self.root, font=self.label_font)
         self.user.pack(pady=5)
 
         # Titulo que indica que la siguiente entrada de texto es para la contraseña
-        self.label_password = tk.Label(self.root, text="Contraseña", font=('Lucida Console', 16), bg='#541388', fg='white')
+        self.label_password = tk.Label(self.root, text="Contraseña", font=self.label_font, bg=self.morado, fg='white')
         self.label_password.pack(pady = 5)
         #Entrada de contraseña
-        self.password = tk.Entry(self.root, font=('Lucida Console', 16), show='*')
+        self.password = tk.Entry(self.root, font=self.label_font, show='*')
         self.password.pack(pady=5)
         
         # Titulo que indica que la siguiente entrada de texto es para la pregunta secreta
-        self.label_quest = tk.Label(self.root, text="Defina una pregunta secreta para cambiar la contraseña en caso de olvido", font=('Lucida Console', 12), bg='#541388', fg='white')
+        self.label_quest = tk.Label(self.root, text="Defina una pregunta secreta para cambiar la contraseña en caso de olvido", font=('Lucida Console', 12), bg=self.morado, fg='white')
         self.label_quest.pack(pady = 5)
         # Entrada para la pregunta secreta
-        self.quest = tk.Entry(self.root, font=('Lucida Console', 16))
+        self.quest = tk.Entry(self.root, font=self.label_font)
         self.quest.pack(pady=5)
         
         # Titulo que indica que la siguiente entrada de texto es para la respuesta secreta
-        self.label_answ = tk.Label(self.root, text="Defina una respuesta para su pregunta secreta", font=('Lucida Console', 16), bg='#541388', fg='white')
+        self.label_answ = tk.Label(self.root, text="Defina una respuesta para su pregunta secreta", font=self.label_font, bg=self.morado, fg='white')
         self.label_answ.pack(pady = 5)
         # Entrada para la respuesta secreta
-        self.answ = tk.Entry(self.root, font=('Lucida Console', 16))
+        self.answ = tk.Entry(self.root, font=self.label_font)
         self.answ.pack(pady=5)
         
         # Titulo que indica que el siguiente menu desplegable es para seleccionar el tipo de conductor
-        self.label_drop_conductor = tk.Label(self.root, text="Seleccione tipo de conductor:", font=('Lucida Console', 16), bg='#541388', fg='white')
+        self.label_drop_conductor = tk.Label(self.root, text="Seleccione tipo de conductor:", font=self.label_font, bg=self.morado, fg='white')
         self.label_drop_conductor.pack(pady=5)
 
         # Lista para el menú desplegable de licencias
@@ -499,11 +502,11 @@ class GUI:
 
         # Menu desplegable para tipo de licencia
         self.dropdown_cond = tk.OptionMenu(self.root, self.selected_conductor, *conductores) # El segundo argumento define donde se almacena la elección y el tercero la lista de opciones.
-        self.dropdown_cond.config(font=('Lucida Console', 16), bg='#C8F50A', fg='#4100A8', width=20)
+        self.dropdown_cond.config(font=self.label_font, bg=self.verde, fg='#4100A8', width=20)
         self.dropdown_cond.pack(pady=5)
         
         # Titulo que indica que el siguiente menu desplegable es para seleccionar la empresa
-        self.label_dropdown_emp = tk.Label(self.root, text="Seleccione empresa:", font=('Lucida Console', 16), bg='#541388', fg='white')
+        self.label_dropdown_emp = tk.Label(self.root, text="Seleccione empresa:", font=self.label_font, bg=self.morado, fg='white')
         self.label_dropdown_emp.pack(pady=5)
 
         #Lista para el menu desplegable de empresas
@@ -514,7 +517,7 @@ class GUI:
 
         #Menu desplehable para empresa
         self.dropdown_emp = tk.OptionMenu(self.root, self.empresa_sel, *empresas)
-        self.dropdown_emp.config(font=('Lucida Console', 16), bg='#C8F50A', fg='#4100A8', width=20)
+        self.dropdown_emp.config(font=self.label_font, bg=self.verde, fg='#4100A8', width=20)
         self.dropdown_emp.pack(pady=5)
 
         # Logo
